@@ -1,0 +1,16 @@
+.todo.file-list
+    - if(typeof list !== "undefined")
+        .todo-search
+            | /
+        ul
+            - each item in list
+                li(class=(item.is_dir === true)? "folder" : "file")
+                    - if (item.is_dir === true)
+                        .todo-icon.fa.fa-folder-open-o
+                    - else
+                        .todo-icon.fa.fa-file-o
+                    .todo-content
+                        h4.todo-name
+                            = ' ' + item.title
+                        input.json-data(type='hidden', value=JSON.stringify(item))
+                        input.checked.hide(type='checkbox')

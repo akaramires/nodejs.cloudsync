@@ -1,0 +1,130 @@
+.col-content
+    .col-wrap
+        .col-row
+            .col-single
+                position relative
+                .loader
+                    position absolute
+                    top 0
+                    right 0
+                    bottom 0
+                    left 0
+                    text-align center
+                    background-color rgba(0, 0, 0, 0.5)
+                    z-index 9999
+                    margin-left 15px
+                    margin-right 15px
+                    border-radius 4px
+                    margin-bottom 20px
+                    font-family FontAwesome
+                    font-style normal
+                    font-weight normal
+                    content "\f110"
+                .file-list
+                    > a
+                        background-repeat no-repeat
+                        background-position 15px center
+                        padding-left 20px
+                        cursor pointer
+                        > .fa:first-of-type
+                            margin-right 10px
+                        .fa-spinner
+                            display none
+
+.from-loader,
+.to-loader
+    display none
+
+.cloud-list
+    display table
+    width 100%
+    position relative
+
+    .process-row
+        display table-row
+
+        &:before
+            top 50px
+            bottom 0
+            position absolute
+            content " "
+            width 100%
+            height 1px
+            background-color #ccc
+            z-order 0
+
+    .process-step
+        display table-cell
+        text-align center
+        position relative
+
+        button
+            opacity 1 !important
+
+        p
+            margin-top 10px
+
+    .btn-circle
+        width 100px
+        height 100px
+        text-align center
+        padding 20px
+        font-size 12px
+        line-height 1.428571429
+        border-radius 15px
+
+.enabled-clouds
+    .notAuth
+        a
+            opacity .2
+    img
+        height 80px
+
+.file-list
+    position: relative
+    &:before
+        display none
+        position: absolute
+        top 0
+        left 0
+        right 0
+        bottom 0
+        z-index 99
+        content " "
+        background-color: #34495E
+        opacity: 0.6
+        border-radius 5px
+    &.show-loader
+        &:before
+            display block
+
+    .todo-search
+        padding: 10px 25px
+        font-size: 15px
+        &:before
+            content ""
+    .todo-icon
+        padding 0 22px 0 0
+    .todo-name
+        font-weight: 300
+        font-size: 15px
+    li
+        padding: 10px 42px 10px 25px
+        margin-top: 1px
+        &:last-child
+            padding-bottom 10px
+    li.folder
+        background #34495e 92% center no-repeat
+
+#pendingTransfers
+    .transfer-list
+        margin-bottom 20px
+        li
+            a
+                padding-bottom 0
+                padding-top 0
+                font-size 15px
+                .badge
+                    margin-top 3px
+
+

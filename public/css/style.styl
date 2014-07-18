@@ -1,0 +1,211 @@
+@import "./base"
+@import "./mixins"
+@import "./profile"
+@import "./cloud"
+
+html
+    position: relative;
+    min-height: 100%;
+
+body
+    margin-bottom: 117px;
+    padding-top: 50px
+    background-color: #ECF0F1
+    > .container
+        padding 30px 15px
+
+code
+    font-size: 80%;
+
+.page-header
+    margin-top 0
+
+.navbar-fixed-top
+    .navbar-brand
+        height 71px
+        padding 14px 15px
+        line-height 48px
+    .navbar-nav
+        > .active
+            > a
+                radius(4px)
+                &.btn
+                    &-danger
+                        background-color #df2e1b
+        > li
+            padding-top 15px
+            padding-bottom 15px
+            > .dropdown-menu
+                margin-top -15px
+            a
+                padding 9px 15px
+                font-size 14px
+                text-transform uppercase
+                margin 0 5px
+                &.btn
+                    &-danger
+                        background-color #e74c3c
+                        &:hover
+                            color white
+                            background-color #df2e1b
+
+.container
+    .text-muted
+        margin 20px 0
+
+#footer
+    position absolute
+    bottom 0
+    width 100%
+    height 117px
+    background-color #f5f5f5
+    .navbar
+        radius(0)
+        margin 0
+    > .container
+        padding-right 15px
+        padding-left 15px
+    .text-muted
+        margin 15px 0
+
+.form-signin
+    max-width 450px
+    padding 15px
+    margin 0 auto
+    .btn-cancel
+        padding-left 0
+
+.btn
+    &:focus
+        outline none !important
+    &-primary.btn-transparent
+        background: transparent
+        border 1px solid #1abc9c
+        color #1abc9c
+        &:hover, &:focus, &:active, &.active
+            color #ffffff
+            background-color #48c9b0
+            border-color #48c9b0
+
+.panel
+    &.panel-plan
+        .lead
+            font-size: 33px;
+            margin-bottom: 0px;
+        &.free
+            border-color: #18bc9c
+            .panel-heading
+                color: #ffffff
+                background-color: #18bc9c
+                border-color: #18bc9c
+            .btn:not(.disabled)
+                color: #ffffff
+                background-color: #18bc9c
+                border-color: #18bc9c
+                &:hover,
+                &:focus
+                    background-color: #13987e
+                    border-color: #11866f
+        &.silver
+            border-color: #2c3e50
+            .panel-heading
+                color: #ffffff
+                background-color: #2c3e50
+                border-color: #2c3e50
+            .btn:not(.disabled)
+                color: #ffffff
+                background-color: #2c3e50
+                border-color: #2c3e50
+                &:hover,
+                &:focus
+                    background-color: #1e2a36
+                    border-color: #1e2a36
+        &.gold
+            border-color: #f39c12
+            .panel-heading
+                color: #ffffff
+                background-color: #f39c12
+                border-color: #f39c12
+            .btn:not(.disabled)
+                color: #ffffff
+                background-color: #f39c12
+                border-color: #f39c12
+                &:hover,
+                &:focus
+                    background-color: #d2850b
+                    border-color: #d2850b
+
+.page
+    &-home
+        div.jumbotron
+            /*padding: 0px 60px*/
+            p
+                margin-bottom 30px
+                font-size 30.006px
+                font-weight 300
+
+        section
+            padding: 50px 0
+            &.contact-us
+                .btn
+                    margin-top: 5px
+            &.newsletter
+                .bar
+                    border-bottom: 2px solid #3f4d61;
+                    display: inline-block;
+                    width: 155px;
+                    margin-bottom: 20px;
+                    margin-top: 10px;
+
+.social-links
+    .btn
+        radius(0)
+        margin: 0 1px 0 0
+        padding: 10px 16px
+
+.settings-page
+    .settings
+        &-row
+            padding-left 15%
+            margin-bottom 40px
+            position relative
+            &-title
+                bottom auto
+                top 10px
+                display: block;
+                width: 260px;
+                position: absolute;
+                left: 0;
+                font-size: 16px;
+                line-height: 13px;
+                color: #c0c1c2;
+                font-weight: 400
+            &-content
+                div.tile
+                    i
+                        margin-bottom 20px
+                        margin-top 20px
+                        display block
+                    h3
+                        padding 10px 0
+
+.nav
+    .pendingTransfers
+        margin-right 70px
+        i.fa
+            position relative
+            span
+                font-size 9px
+                position absolute
+                top -7px
+                left 15px
+
+.modal
+    overflow auto
+    &-open
+        overflow auto
+
+@media (min-width:768px)
+    #pendingTransfers
+        .modal-dialog
+            width 90%

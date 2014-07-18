@@ -1,0 +1,39 @@
+extends ../layout
+
+block post_scripts
+    script(src='/js/clouds.js')
+
+block content
+
+    .col-content
+        .col-wrap
+            - if(typeof panels !== "undefined")
+                .row.col-row-toolbar
+                    .col-xs-6.col-md-6
+                        h2.text-center
+                            i(class='#{panels.first.icon}')= ' ' + panels.first.title
+                        button.btn.btn-link.btn-up-from(type="button", data-parent-id='')
+                            i.fa.fa-arrow-up.fa-2x
+                        i.fa.fa-spinner.fa-spin.fa-2x.pull-right.from-loader
+                    .col-xs-6.col-md-6
+                        h2.text-center
+                            i(class='#{panels.second.icon}')= ' ' + panels.second.title
+                        button.btn.btn-link.btn-up-to(type="button", data-parent-id='')
+                            i.fa.fa-arrow-up.fa-2x
+                        i.fa.fa-spinner.fa-spin.fa-2x.pull-right.to-loader
+
+                .row.col-row
+                    .col-xs-6.col-md-6.col-single.from
+                        .list-group.empty
+                            span.list-group-item.text-center
+                                - if (panels.first.show)
+                                    i.fa.fa-spinner.fa-spin
+                                - else
+                                    a.btn.btn-danger(href='#{panels.first.authUrl}') Authenticate
+                    .col-xs-6.col-md-6.col-single.to
+                        .list-group.empty
+                            span.list-group-item.text-center
+                                - if (panels.second.show)
+                                    i.fa.fa-spinner.fa-spin
+                                - else
+                                    a.btn.btn-danger(href='#{panels.second.authUrl}') Authenticate

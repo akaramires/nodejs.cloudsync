@@ -1,0 +1,24 @@
+#pendingTransfers.modal.fade(tabindex="-1", role="dialog", aria-labelledby="pendingTransfersLabel", aria-hidden="true")
+    .modal-dialog
+        .modal-content
+            .modal-header
+                button.close(type="button", data-dismiss="modal")
+                    span(aria-hidden="true") &times;
+                    span.sr-only Close
+                h4.modal-title#pendingTransfersLabel Pending Transfers
+            .modal-body
+                .row
+                    .col-md-6
+                        h5.text-center To Google Drive
+                        ul#transfersToGoogle.nav.nav-pills.nav-stacked.transfer-list
+                            li.disabled
+                                a Empty
+                        p.text-center
+                            button.btn.btn-success(type="button") Start
+                    .col-md-6
+                        h5.text-center To Dropbox
+                        ul#transfersToDropbox.nav.nav-pills.nav-stacked.transfer-list
+                            li.disabled
+                                a Empty
+                        p.text-center
+                            button.btn.btn-success(type="button") Start

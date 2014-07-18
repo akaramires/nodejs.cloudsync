@@ -1,0 +1,17 @@
+extends ../layout
+
+block content
+
+    form.form-horizontal(role="form", method="post")
+        .form-group
+            label.col-sm-2.control-label(for="editEmployeeTitle") Title
+            .col-sm-4
+                input#editEmployeeTitle.form-control(type="text" placeholder="Title", name="title")
+        .form-group
+            label.col-sm-2.control-label(for="editEmployeeName") Name
+            .col-sm-4
+                input#editEmployeeName.form-control(type="text" placeholder="Name", name="name")
+        .form-group
+            .col-sm-4.col-sm-offset-2
+                input.btn.btn-success.pull-right(type="submit", value="Save")
+                a.btn.btn-link.pull-right(href="/employees") Cancel

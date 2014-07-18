@@ -1,0 +1,49 @@
+extends ../layout
+
+block sub-title
+    | &nbsp;
+    small
+        a(href='/profile/edit') edit
+
+block content
+
+    .row
+        .col-sm-4.col-md-4.user-details
+            - if(typeof user !== "undefined")
+                .user-image
+                    img.img-circle(src=user.photo)
+                .user-info-block
+                    .user-heading
+                        h3= user.first_name + ' ' + user.last_name
+                        span.help-block 1991 Ferncliff Dr
+                    ul.navigation
+                        li.col-sm-4.col-md-4.active
+                            a(data-toggle="tab" href="#information")
+                                span.fa.fa-user
+                        li.col-sm-4.col-md-4
+                            a(data-toggle="tab" href="#settings")
+                                span.fa.fa-cog
+                        li.col-sm-4.col-md-4
+                            a(data-toggle="tab" href="#email")
+                                span.fa.fa-envelope
+                    .user-body
+                        .tab-content
+                            .tab-pane.active#information
+                                h4 Account Information
+                                address
+                                    strong Twitter, Inc.
+                                    br
+                                    | 795 Folsom Ave, Suite 600
+                                    br
+                                    | San Francisco, CA 94107
+                                    br
+                                    abbr(title="Phone") P:
+                                    | (283)-654-3834
+                            .tab-pane#settings
+                                h4 Settings
+                                span
+                            .tab-pane#email
+                                h4 Email
+                                address
+                                    a(href="mailto:#") marion.hansen39@example.com
+

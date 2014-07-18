@@ -1,0 +1,134 @@
+extends layout
+
+block content
+    .container.page-home
+        section#home
+            .inner.clearfix
+                .jumbotron.text-center
+                    h1 CloudSync!
+                    p.lead CloudSync! makes it possible for you to privately sync & access your data from everywhere.
+                    p
+                        a.btn.btn-success.btn-lg(role="button", href="/register") Get started today
+
+        section.row.pricing#pricing
+            .inner.clearfix.text-center
+                h3 Pricing
+                .col-md-4
+                    .panel.panel-plan.free
+                        .panel-heading
+                            h4.text-center FREE PLAN
+                        .panel-body.text-center
+                            p.lead
+                                strong $0 / month
+                        ul.list-group.list-group-flush.text-center
+                            li.list-group-item.clearfix
+                                i.icon-ok.text-danger
+                                span.pull-left Total size of files
+                                span.pull-right 2GB
+                            li.list-group-item.clearfix
+                                i.icon-ok.text-danger
+                                span.pull-left Total number of files
+                                span.pull-right 20
+                            li.list-group-item.clearfix
+                                i.icon-ok.text-danger
+                                span.pull-left Max file size
+                                span.pull-right 50MB
+                            li.list-group-item.clearfix
+                                i.icon-ok.text-danger
+                                span.pull-left 100% Private
+                        .panel-footer
+                            a.btn.btn-lg.btn-block(href='#') BUY NOW!
+                .col-md-4
+                    .panel.panel-plan.silver
+                        .panel-heading
+                            h4.text-center SILVER PLAN
+                        .panel-body.text-center
+                            p.lead
+                                strong $30 / month
+                        ul.list-group.list-group-flush.text-center
+                            li.list-group-item.clearfix
+                                i.icon-ok.text-danger
+                                span.pull-left Total size of files
+                                span.pull-right 10GB
+                            li.list-group-item.clearfix
+                                i.icon-ok.text-danger
+                                span.pull-left Total number of files
+                                span.pull-right Unlimited
+                            li.list-group-item.clearfix
+                                i.icon-ok.text-danger
+                                span.pull-left Max file sizespan.pull-right
+                                span.pull-right 300MB
+                            li.list-group-item.clearfix
+                                i.icon-ok.text-danger
+                                span.pull-left 100% Private
+                        .panel-footer
+                            a.btn.btn-lg.btn-block(href='#') BUY NOW!
+                .col-md-4
+                    .panel.panel-plan.gold
+                        .panel-heading
+                            h4.text-center GOLD PLAN
+                        .panel-body.text-center
+                            p.lead
+                                strong $100 / month
+                        ul.list-group.list-group-flush.text-center
+                            li.list-group-item.clearfix
+                                i.icon-ok.text-danger
+                                span.pull-left Total size of files
+                                span.pull-right Unlimited
+                            li.list-group-item.clearfix
+                                i.icon-ok.text-danger
+                                span.pull-left Total number of files
+                                span.pull-right Unlimited
+                            li.list-group-item.clearfix
+                                i.icon-ok.text-danger
+                                span.pull-left Max file size
+                                span.pull-right Unlimited
+                            li.list-group-item.clearfix
+                                i.icon-ok.text-danger
+                                span.pull-left 100% Private
+                        .panel-footer
+                            a.btn.btn-lg.btn-block(href='#') BUY NOW!
+
+        section.row.about#about
+            .inner.clearfix.text-center
+                h3 About
+                .col-sm-12
+                    p Lorem ipsum dolor sit amet, et pri option ancillae consulatu, in sumo putant propriae cum. Agam fabellas vel ut, sit probatus lobortis ne, ea quod illum eripuit mei. Et clita mnesarchum philosophia qui, id accusata deseruisse usu, tibique consequat dissentiet at ius. Eos everti inciderint an, vix percipit invidunt et. Eu nam nullam percipit disputando.
+
+        section.row.newsletter#newsletter
+            .inner.clearfix
+                .col-sm-12.text-center
+                    h3 Newsletter
+                    .row
+                        .col-md-8.col-md-offset-2
+                            p By signing up for our newsletter you will be notified of changes to our site. You may also receive promotional one time offers that are well worth your time!
+                    span.bar
+                    .row
+                        .col-md-6.col-md-offset-3
+                            - if(typeof messages !== "undefined")
+                                - if (messages.error)
+                                    .alert.alert-danger
+                                        span= messages.error
+                                - if (messages.success)
+                                    .alert.alert-success
+                                        span= messages.success
+                                - if (messages.info)
+                                    .alert.alert-info
+                                        span= messages.info
+                                - if (messages.warning)
+                                    .alert.alert-warning
+                                        span= messages.warning
+                            form(method='post')
+                                .input-group
+                                    input.required.email.form-control(type='email', value='', placeholder='E-mail address', name='Subscribe[email]', required)
+                                    span.input-group-btn
+                                        input.btn.btn-default(type='submit', value='Subscribe', name='subscribe')
+
+
+        section.row.contact-us#contact-us
+            .inner.clearfix.text-center
+                h3 Questions?
+                .col-sm-8
+                    h4 We're here for you 7 days a week
+                .col-sm-3
+                    a.btn.btn-success.btn-lg.btn-block(href='/contact-us') Contact Us

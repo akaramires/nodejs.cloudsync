@@ -1,0 +1,45 @@
+.navbar.navbar-inverse.navbar-fixed-top(role="navigation")
+    .container
+        .navbar-header
+            button.navbar-toggle(type="button" data-toggle="collapse" data-target=".navbar-collapse")
+                span.sr-only Toggle navigation
+                span.icon-bar
+                span.icon-bar
+                span.icon-bar
+            a.navbar-brand(href="/")
+                i(class='fa fa-cloud')  CloudSync!
+        .collapse.navbar-collapse
+            ul.nav.navbar-nav.navbar-right
+                if (!user)
+                    li
+                        a(href=(title == 'Home') ? '#pricing' : '/#pricing')  Pricing
+                    li
+                        a(href=(title == 'Home') ? '#about' : '/#about')  About
+                    li
+                        a(href=(title == 'Home') ? '#newsletter' : '/#newsletter')  Newsletter
+                    li
+                        a(href=(title == 'Home') ? '#contact-us' : '/#contact-us')  Questions?
+                    li
+                        a.btn.btn-success(href='/register')  Sign Up
+                    li
+                        a(href='/login')  Sign in
+                if (user)
+                    li.pendingTransfers
+                        a(data-toggle="modal", data-target="#pendingTransfers", href="#")
+                            i(class='fa fa-refresh')
+                                span.label.label-danger 0
+
+                    li
+                        a(href="/cloud-sync")
+                            i(class='fa fa-cloud')  Start sync
+                    li
+                        a(href="/profile")
+                            i(class='fa fa-user')  Profile
+                    li
+                        a(href="/settings")
+                            i(class='fa fa-cogs')  Settings
+                    li
+                        a(href="/logout")
+                            i(class='fa fa-sign-out')  Logout
+
+include ./pendingTransfers

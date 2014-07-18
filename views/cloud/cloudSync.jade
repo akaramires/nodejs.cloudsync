@@ -1,0 +1,14 @@
+extends ../layout
+
+block content
+    .row
+        - if (!googleIsConnected || !dropboxIsConnected)
+            .col-sm-12
+                .alert.alert-danger(role="alert")
+                    | You haven't connected Google and Dropbox accounts yet! Please visit your
+                    a(href='/settings')= ' settings '
+                    | page for connect them.
+        - else
+            .col-sm-6.col-md-6
+                a.btn.btn-primary.btn-lg.btn-block.btn-transparent(href='/cloud-sync/google-dropbox')
+                    | Google Drive and Dropbox
