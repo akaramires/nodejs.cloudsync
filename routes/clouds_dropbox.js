@@ -43,17 +43,14 @@ exports.routes = {
                     path = req.body.parent.path;
                 }
             }
-            var client = dboxApp.client(req.user.dropbox)
+            var client = dboxApp.client(req.user.dropbox);
 
             if (client != null) {
-//                client.get('_My', function (status, reply, metadata) {
-//                    res.send(reply);
-//                })
                 client.metadata(path, {}, function (status, result) {
                     for (var i in result.contents) {
                         if (result.contents[i].path != undefined) {
-                            var title = result.contents[i].path.split('/')
-                            result.contents[i].title = title[title.length - 1]
+                            var title = result.contents[i].path.split('/');
+                            result.contents[i].title = title[title.length - 1];
 //
 //                            client.get(result.contents[i].path, function (status, reply, metadata) {
 //                                res.send(reply);

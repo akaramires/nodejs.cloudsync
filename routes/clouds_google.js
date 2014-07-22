@@ -2,9 +2,9 @@ var config = require('../config'),
     googleapis = require('googleapis'),
     AccountModel = require('../models/account');
 
-var async = require('async'),
-    request = require('request'),
-    fs = require('fs');
+var request = require('request'),
+    fs = require('fs'),
+    http = require('http');
 
 var config_google = config.cloud.google,
     OAuth2Client = googleapis.OAuth2Client,
@@ -22,16 +22,20 @@ exports.routes = {
         res.redirect(drive_auth_url);
     },
     refresh: function (req, res) {
-        oauth2Client.setCredentials(req.user.google);
-        oauth2Client.refreshAccessToken(function (err, tokens) {
-            res.send(tokens);
-//            AccountModel.update({ _id: req.user._id }, { $set: {google: tokens} }, function (error, docs) {
-//                if (error !== null) {
-//                    req.flash('error', error.message);
-//                }
-//                res.redirect('/cloud-sync/google-dropbox');
-//            });
-        });
+        if (req.user.google.refresh_token === undefined) {
+            res.redirect(drive_auth_url);
+        } else {
+            oauth2Client.setCredentials(req.user.google);
+            oauth2Client.refreshAccessToken(function (err, tokens) {
+                res.send(tokens);
+//                AccountModel.update({ _id: req.user._id }, { $set: {google: tokens} }, function (error, docs) {
+//                    if (error !== null) {
+//                        req.flash('error', error.message);
+//                    }
+//                    res.redirect('/cloud-sync/google-dropbox');
+//                });
+            });
+        }
     },
     get    : function (req, res) {
         if (!req.user.google || req.user.google.access_token === undefined) {
@@ -41,48 +45,6 @@ exports.routes = {
                 msg   : 'not authenticated'
             }));
         } else {
-            const PNG_FILE = 'eae6f5070a8cc2b7c37d4ecd0a2d8fe0.jpg';
-
-            var fstatus = fs.linkSync('http://beta.hstor.org/getpro/habr/post_images/eae/6f5/070/eae6f5070a8cc2b7c37d4ecd0a2d8fe0.jpg');
-            fs.open(PNG_FILE, 'r', function (status, fileDescripter) {
-                if (status) {
-                    callback(status.message);
-                    return;
-                }
-
-                var buffer = new Buffer(fstatus.size);
-                fs.read(fileDescripter, buffer, 0, fstatus.size, 0, function (err, num) {
-                    request.post({
-                        'url'      : 'https://www.googleapis.com/upload/drive/v2/files',
-                        'qs'       : {
-                            'uploadType': 'multipart'
-                        },
-                        'headers'  : {
-                            'Authorization': 'Bearer ' + req.user.google.access_token
-                        },
-                        'multipart': [
-                            {
-                                'Content-Type': 'application/json; charset=UTF-8',
-                                'body'        : JSON.stringify({
-                                    'title'  : PNG_FILE,
-                                    'parents': [
-                                        {
-                                            'id': '0B482Ywq2Rr2hOEVjQlRuSEs0Nkk'
-                                        }
-                                    ]
-                                })
-                            },
-                            {
-                                'Content-Type': 'image/png',
-                                'body'        : buffer
-                            }
-                        ]
-                    }, function () {
-//                        console.log(arguments);
-                    });
-
-                });
-            });
             if (req.body.parent === undefined) {
                 req.body.parent = {id: 'root'};
             }
@@ -101,7 +63,18 @@ exports.routes = {
                     var $_page = 0;
                     var retrievePageOfFiles = function (request, result) {
                         request.execute(function (err, resp) {
-                            if (resp !== null) {
+                            if (!!err || resp === null) {
+                                res.render('cloud/refresh', {
+                                    url: '/cloud-sync/google/refresh'
+                                }, function (err, html) {
+                                    res.writeHead(200, {"Content-Type": "application/json"});
+                                    res.end(JSON.stringify({
+                                        status: false,
+                                        msg   : 'refresh',
+                                        html  : html
+                                    }));
+                                });
+                            } else {
                                 result = result.concat(resp.items);
                                 var nextPageToken = resp.nextPageToken;
                                 if (nextPageToken) {
@@ -131,12 +104,6 @@ exports.routes = {
                                         }));
                                     });
                                 }
-                            } else {
-                                res.writeHead(200, {"Content-Type": "application/json"});
-                                res.end(JSON.stringify({
-                                    status: false,
-                                    msg   : 'refresh'
-                                }));
                             }
                         });
                     };
@@ -149,50 +116,77 @@ exports.routes = {
         }
     },
 
-    upload: function () {
-//        const PNG_FILE = __dirname + '/../public/img/done.png';
-        const PNG_FILE = 'http://beta.hstor.org/getpro/habr/post_images/eae/6f5/070/eae6f5070a8cc2b7c37d4ecd0a2d8fe0.jpg';
 
-        var fstatus = fs.statSync(PNG_FILE);
-        fs.open(PNG_FILE, 'r', function (status, fileDescripter) {
-            if (status) {
-                callback(status.message);
-                return;
-            }
-
-            var buffer = new Buffer(fstatus.size);
-            fs.read(fileDescripter, buffer, 0, fstatus.size, 0, function (err, num) {
-                request.post({
-                    'url'      : 'https://www.googleapis.com/upload/drive/v2/files',
-                    'qs'       : {
-                        'uploadType': 'multipart'
-                    },
-                    'headers'  : {
-                        'Authorization': 'Bearer ' + req.user.google.access_token
-                    },
-                    'multipart': [
-                        {
-                            'Content-Type': 'application/json; charset=UTF-8',
-                            'body'        : JSON.stringify({
-                                'title'  : PNG_FILE,
-                                'parents': [
-                                    {
-                                        'id': '0B482Ywq2Rr2hOEVjQlRuSEs0Nkk'
-                                    }
-                                ]
-                            })
-                        },
-                        {
-                            'Content-Type': 'image/png',
-                            'body'        : buffer
-                        }
-                    ]
-                }, function () {
-                    console.log(arguments);
+    // http://runnable.com/UTlPMF-f2W1TAAAk/create-a-new-doc-with-google-drive-api
+    // http://debuggable.com/posts/streaming-file-uploads-with-node-js:4ac094b2-b6c8-4a7f-bd07-28accbdd56cb
+    // http://www.componentix.com/blog/9/file-uploads-using-nodejs-now-for-real
+    upload  : function (req, res) {
+        if (req.body.transfers === undefined) {
+            res.writeHead(200, {"Content-Type": "application/json"});
+            res.end(JSON.stringify({
+                status: false
+            }));
+        } else {
+            var config_dropbox = config.cloud.dropbox,
+                dbox = require("dbox"),
+                dboxApp = dbox.app({
+                    'app_key'   : config_dropbox.CLIENT_ID,
+                    'app_secret': config_dropbox.CLIENT_SECRET,
+                    'root'      : config_dropbox.ROOT
                 });
 
-            });
-        });
+            var client = dboxApp.client(req.user.dropbox),
+                transfers = req.body.transfers,
+                destinationID = req.body.destinationID;
+
+            for (var i in transfers) {
+                client.get(transfers[i].path, function (status, reply, metadata) {
+                    request.post({
+                        'url'      : 'https://www.googleapis.com/upload/drive/v2/files',
+                        'qs'       : {
+                            'uploadType': 'multipart'
+                        },
+                        'headers'  : {
+                            'Authorization': 'Bearer ' + req.user.google.access_token
+                        },
+                        'multipart': [
+                            {
+                                'Content-Type': 'application/json; charset=UTF-8',
+                                'body'        : JSON.stringify({
+                                    'title'  : transfers[i].title,
+                                    'parents': [
+                                        {
+                                            'id': destinationID
+                                        }
+                                    ]
+                                })
+                            },
+                            {
+                                'Content-Type': transfers[i].mime_type,
+                                'body'        : reply
+                            }
+                        ]
+                    }, function (err, httpResponse, body) {
+                        var responseObj = {};
+                        if (httpResponse.statusCode == 200) {
+                            if (err) {
+                                responseObj.status = false;
+                                responseObj.message = err.message;
+                            } else {
+                                responseObj.status = true;
+                            }
+                            res.writeHead(200, {"Content-Type": "application/json"});
+                            res.end(JSON.stringify(responseObj));
+                        } else {
+                            responseObj.status = false;
+                            responseObj.message = JSON.parse(body).error.message;
+                            res.writeHead(200, {"Content-Type": "application/json"});
+                            res.end(JSON.stringify(responseObj));
+                        }
+                    });
+                });
+            }
+        }
     },
     callback: function (req, res) {
         var code = req.query.code;

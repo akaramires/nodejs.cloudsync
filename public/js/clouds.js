@@ -73,7 +73,7 @@
             }
 
             $.ajax({
-                url       : getAjaxUrl('google'),
+                url       : getAjaxUrl('google', 'get'),
                 type      : 'POST',
                 data      : {
                     parent: parent
@@ -103,7 +103,7 @@
                         self.$colSingleFrom.find('.todo-search').html(self.parentTitles[parent.id])
                     } else {
                         if (response.msg == 'refresh') {
-                            window.location = '/cloud-sync/google/refresh'
+                            self.$colSingleFrom.html(response.html);
                         }
                     }
                 }
@@ -144,7 +144,6 @@
 
             this.$colSingleTo.on('click', '.todo.file-list li.file', function (e) {
                 var fileObj = JSON.parse($(this).find('.json-data').val());
-                console.log(fileObj);
                 var $checkBox = $(this).find('.checked.hide');
                 $checkBox.prop("checked", !$checkBox.prop("checked"));
 
@@ -168,6 +167,36 @@
                 self.parentIds.pop();
                 self.exec({path: self.parentIds[self.parentIds.length - 1]}, false);
             });
+
+            $(document).on('click', '#startTransferToGoogle', function (e) {
+                var $btn = $(this);
+
+                $.ajax({
+                    url       : getAjaxUrl('google', 'upload'),
+                    type      : 'POST',
+                    data      : {
+                        transfers    : self.transfers,
+                        destinationID: window.GooglePanel.parentIds[window.GooglePanel.parentIds.length - 1]
+                    },
+                    beforeSend: function () {
+                        if (Object.size(self.transfers)) {
+                            $btn.button('loading');
+                            return true;
+                        }
+                        return false;
+                    },
+                    complete  : function () {
+                        $btn.button('reset');
+                    },
+                    success   : function (response) {
+                        if (response.status) {
+                            window.Transfers.clear('google');
+//                            window.Transfers.clear('dropbox');
+                        }
+                    }
+                });
+            });
+
         };
 
         DropboxPanel.prototype.exec = function (parent, target) {
@@ -185,7 +214,7 @@
             }
 
             $.ajax({
-                url       : getAjaxUrl('dropbox'),
+                url       : getAjaxUrl('dropbox', 'get'),
                 type      : 'POST',
                 data      : {
                     parent: parent
@@ -224,17 +253,48 @@
         Transfers.prototype.renderModal = function () {
             var toDBoxTransfers = window.GooglePanel.transfers;
             var toDBoxHtml = '';
-            for (var key in toDBoxTransfers) {
-                toDBoxHtml += '<li><a>' + toDBoxTransfers[key].title + '<span class="badge pull-right">' + bytesToSize(toDBoxTransfers[key].fileSize) + '</span></a></li>';
+            if (Object.size(toDBoxTransfers)) {
+                for (var key in toDBoxTransfers) {
+                    toDBoxHtml += '<li><a>' + toDBoxTransfers[key].title + '<span class="badge pull-right">' + bytesToSize(toDBoxTransfers[key].fileSize) + '</span></a></li>';
+                }
+            } else {
+                toDBoxHtml += '<li class="disabled"><a>Empty</a></li>';
             }
             $('#transfersToDropbox').html(toDBoxHtml);
 
             var toGDriveTransfers = window.DropboxPanel.transfers;
             var toGDriveHtml = '';
-            for (var key in toGDriveTransfers) {
-                toGDriveHtml += '<li><a>' + toGDriveTransfers[key].title + '<span class="badge pull-right">' + bytesToSize(toGDriveTransfers[key].fileSize) + '</span></a></li>';
+            if (Object.size(toGDriveTransfers)) {
+                for (var key in toGDriveTransfers) {
+                    toGDriveHtml += '<li><a>' + toGDriveTransfers[key].title + '<span class="badge pull-right">' + toGDriveTransfers[key].size + '</span></a></li>';
+                }
+            } else {
+                toGDriveHtml += '<li class="disabled"><a>Empty</a></li>';
             }
-            $('#transfersToDropbox').html(toGDriveHtml);
+            $('#transfersToGoogle').html(toGDriveHtml);
+
+            $(".pendingTransfers #countTransfers").html((Object.size(toDBoxTransfers) + Object.size(toGDriveTransfers)));
+        };
+
+        Transfers.prototype.clear = function (type) {
+            var winGoogle = window.GooglePanel;
+            var winDropbox = window.DropboxPanel;
+
+            if (type == 'google') {
+                winGoogle.transfers = {};
+                $('#transfersToGoogle').html('<li class="disabled"><a>Empty</a></li>');
+                $(".pendingTransfers #countTransfers").html(Object.size(winGoogle.transfers) + Object.size(winDropbox.transfers));
+                winGoogle.exec({id: winGoogle.parentIds[winGoogle.parentIds.length - 1]}, false);
+            }
+
+            if (type == 'dropbox') {
+                winDropbox.transfers = {};
+                $('#transfersToGoogle').html('<li class="disabled"><a>Empty</a></li>');
+                $(".pendingTransfers #countTransfers").html(Object.size(winGoogle.transfers) + Object.size(winDropbox.transfers));
+                winDropbox.exec({path: winDropbox.parentIds[winDropbox.parentIds.length - 1]}, false);
+            }
+
+            $('#pendingTransfers').modal('hide');
         };
 
         return Transfers;
@@ -248,8 +308,8 @@
         return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
     };
 
-    function getAjaxUrl(type) {
-        return '/cloud-sync/' + type + '/get';
+    function getAjaxUrl(type, route) {
+        return '/cloud-sync/' + type + '/' + route;
     }
 
     $(function () {

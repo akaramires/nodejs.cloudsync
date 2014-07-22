@@ -27,19 +27,25 @@
                     li.pendingTransfers
                         a(data-toggle="modal", data-target="#pendingTransfers", href="#")
                             i(class='fa fa-refresh')
-                                span.label.label-danger 0
+                                span.label.label-danger#countTransfers 0
 
                     li
                         a(href="/cloud-sync")
                             i(class='fa fa-cloud')  Start sync
-                    li
-                        a(href="/profile")
-                            i(class='fa fa-user')  Profile
-                    li
-                        a(href="/settings")
-                            i(class='fa fa-cogs')  Settings
-                    li
-                        a(href="/logout")
-                            i(class='fa fa-sign-out')  Logout
+                    li.dropdown
+                        a.dropdown-toggle(href="#", data-toggle="dropdown")
+                            i(class='fa fa-user') <b class="caret"></b>
+                        span.dropdown-arrow
+                        ul.dropdown-menu
+                            li
+                                a(href="/profile")
+                                    i(class='fa fa-user')  Profile
+                            li
+                                a(href="/settings")
+                                    i(class='fa fa-cogs')  Settings
+                            li.divider
+                            li
+                                a(href="/logout")
+                                    i(class='fa fa-sign-out')  Logout
 
 include ./pendingTransfers
