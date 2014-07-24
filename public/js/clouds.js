@@ -20,28 +20,16 @@
         };
 
         GooglePanel.prototype.init = function () {
-//            this.exec({id: 'root'}, false);
-            this.exec({id: '0B482Ywq2Rr2hOEVjQlRuSEs0Nkk'}, false);
+            this.exec({id: 'root'}, false);
+//            this.exec({id: '0B482Ywq2Rr2hOEVjQlRuSEs0Nkk'}, false);
         };
 
         GooglePanel.prototype.assignEvents = function () {
             var self = this;
 
-            this.$colSingleFrom.on('click', '.todo.file-list li.file', function (e) {
-                var fileObj = JSON.parse($(this).find('.json-data').val());
-                var $checkBox = $(this).find('.checked.hide');
-                $checkBox.prop("checked", !$checkBox.prop("checked"));
-
-                if ($checkBox.prop("checked")) {
-                    $(this).addClass('todo-done');
-                    self.transfers[fileObj.id] = fileObj;
-                } else {
-                    $(this).removeClass('todo-done');
-                    delete self.transfers[fileObj.id];
-                }
-
-                window.Transfers.renderModal();
-            });
+//            this.$colSingleFrom.on('click', '.todo.file-list li.file', function (e) {
+//                $(this).toggleClass('todo-done');
+//            });
 
             this.$colSingleFrom.on('click', '.todo.file-list li.folder', function (e) {
                 var data = JSON.parse($(this).find('.json-data').val());
@@ -101,6 +89,7 @@
                     if (response.status) {
                         self.$colSingleFrom.html(response.html);
                         self.$colSingleFrom.find('.todo-search').html(self.parentTitles[parent.id])
+                        window.Common.focus();
                     } else {
                         if (response.msg == 'refresh') {
                             self.$colSingleFrom.html(response.html);
@@ -135,28 +124,16 @@
         };
 
         DropboxPanel.prototype.init = function () {
-            this.exec({path: '/WGEN/Legal'}, false);
-//            this.exec({id: 'root'}, false);
+//            this.exec({path: '/WGEN/Legal'}, false);
+            this.exec({id: 'root'}, false);
         };
 
         DropboxPanel.prototype.assignEvents = function () {
             var self = this;
 
-            this.$colSingleTo.on('click', '.todo.file-list li.file', function (e) {
-                var fileObj = JSON.parse($(this).find('.json-data').val());
-                var $checkBox = $(this).find('.checked.hide');
-                $checkBox.prop("checked", !$checkBox.prop("checked"));
-
-                if ($checkBox.prop("checked")) {
-                    $(this).addClass('todo-done');
-                    self.transfers[fileObj.path] = fileObj;
-                } else {
-                    $(this).removeClass('todo-done');
-                    delete self.transfers[fileObj.path];
-                }
-
-                window.Transfers.renderModal();
-            });
+//            this.$colSingleTo.on('click', '.todo.file-list li.file', function (e) {
+//                $(this).toggleClass('todo-done');
+//            });
 
             this.$colSingleTo.on('click', '.todo.file-list li.folder', function (e) {
                 var data = JSON.parse($(this).find('.json-data').val());
@@ -191,7 +168,7 @@
                     success   : function (response) {
                         if (response.status) {
                             window.Transfers.clear('google');
-//                            window.Transfers.clear('dropbox');
+                            window.Transfers.clear('dropbox');
                         }
                     }
                 });
@@ -236,6 +213,7 @@
                     if (response.status) {
                         self.$colSingleTo.html(response.html);
                         self.$colSingleTo.find('.todo-search').html(self.parentTitles[parent.id || parent.path])
+                        window.Common.focus();
                     }
                 }
             });
@@ -301,12 +279,118 @@
 
     })();
 
-    function bytesToSize(bytes) {
-        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-        if (bytes == 0) return '0 Byte';
-        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
-    };
+    var KeyCodeEvents = (function () {
+
+        function KeyCodeEvents() {
+            this.current = $('body').find('.file-list li.current-file-focus');
+        }
+
+        KeyCodeEvents.prototype.up = function () {
+            if (this.current.prev('li').length) {
+                this.current.removeClass('current-file-focus');
+                this.current.prev('li').addClass('current-file-focus');
+            }
+        };
+
+        KeyCodeEvents.prototype.down = function () {
+            if (this.current.next('li').length) {
+                this.current.removeClass('current-file-focus');
+                this.current.next('li').addClass('current-file-focus');
+            }
+        };
+
+        KeyCodeEvents.prototype.tab = function () {
+            var directions = { from: 'to', to: 'from' };
+            var currentDirection = this.current.closest('.col-single').attr('data-direction');
+
+            this.current.removeClass('current-file-focus');
+            $('body').find('.col-single.' + directions[currentDirection] + ' .file-list li:eq(0)').addClass('current-file-focus');
+        };
+
+        KeyCodeEvents.prototype.enter = function () {
+            if (this.current.hasClass('folder')) {
+                this.current.trigger('click');
+            }
+        };
+
+        KeyCodeEvents.prototype.back = function () {
+            var currentDirection = this.current.closest('.col-single').attr('data-direction');
+
+            $('body').find('.btn.btn-link.btn-up-' + currentDirection).trigger('click');
+        };
+
+        return KeyCodeEvents;
+
+    })();
+
+    var Common = (function () {
+
+        function Common() {
+
+        }
+
+        Common.prototype.checkType = function () {
+            if ($('body').find('.file-list li.current-file-focus').hasClass('folder')) {
+                $('#startSync').attr('disabled', true);
+            } else {
+                $('#startSync').attr('disabled', false)
+            }
+        };
+
+        Common.prototype.focus = function () {
+            var self = this;
+
+            $('body').find('.file-list li').removeClass('current-file-focus');
+            $('body').find('.file-list li:eq(0)').addClass('current-file-focus');
+
+            if (window.manInit) {
+                return;
+            } else {
+                window.manInit = true;
+                this.checkType();
+            }
+
+            $('body').on('click', '.todo.file-list li.file', function (e) {
+                $('.todo.file-list li').removeClass('current-file-focus');
+                $(this).addClass('current-file-focus');
+            });
+
+            $(document).on('keydown', function (e) {
+                window.KeyCodeEvents = new KeyCodeEvents;
+                var KeyCodeAction = window.KeyCodeEvents;
+
+                if (e.which == 38) {
+                    e.preventDefault();
+                    KeyCodeAction.up();
+                }
+
+                if (e.which == 40) {
+                    e.preventDefault();
+                    KeyCodeAction.down();
+                }
+
+                if (e.which == 9) {
+                    e.preventDefault();
+                    KeyCodeAction.tab();
+                }
+
+                if (e.which == 13) {
+                    e.preventDefault();
+                    KeyCodeAction.enter();
+                }
+
+                if (e.which == 8) {
+                    e.preventDefault();
+                    KeyCodeAction.back();
+                }
+
+                self.checkType();
+            });
+        };
+
+        return Common;
+
+    })();
 
     function getAjaxUrl(type, route) {
         return '/cloud-sync/' + type + '/' + route;
@@ -316,6 +400,17 @@
         window.GooglePanel = new GooglePanel;
         window.DropboxPanel = new DropboxPanel;
         window.Transfers = new Transfers;
+
+        window.manInit = false;
+        window.Common = new Common;
     });
 
 }).call(this);
+
+function bytesToSize(bytes) {
+    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    if (bytes == 0) return '0 Byte';
+    var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+    return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+}
+

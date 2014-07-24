@@ -211,7 +211,8 @@
 .file-list li:last-child {
   padding-bottom: 10px;
 }
-.file-list li.folder {
+.file-list li.folder,
+.file-list li.file {
   background: #34495e 92% center no-repeat;
 }
 #pendingTransfers .transfer-list {
@@ -224,6 +225,10 @@
 }
 #pendingTransfers .transfer-list li a .badge {
   margin-top: 3px;
+}
+.file-list li.current-file-focus {
+  background-color: rgba(52,73,94,0.4);
+  outline: 1px dotted;
 }
 html {
   position: relative;

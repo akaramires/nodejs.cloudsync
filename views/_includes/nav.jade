@@ -24,7 +24,7 @@
                     li
                         a(href='/login')  Sign in
                 if (user)
-                    li.pendingTransfers
+                    //li.pendingTransfers
                         a(data-toggle="modal", data-target="#pendingTransfers", href="#")
                             i(class='fa fa-refresh')
                                 span.label.label-danger#countTransfers 0
@@ -48,4 +48,3 @@
                                 a(href="/logout")
                                     i(class='fa fa-sign-out')  Logout
 
-include ./pendingTransfers

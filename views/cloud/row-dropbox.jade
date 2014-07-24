@@ -10,7 +10,12 @@
                     - else
                         .todo-icon.fa.fa-file-o
                     .todo-content
-                        h4.todo-name
+                        h4.todo-name.pull-left
                             = ' ' + item.title
+                        span.todo-size.pull-right
+                            - if (item.is_dir === true)
+                                | -
+                            - else
+                                = item.size
                         input.json-data(type='hidden', value=JSON.stringify(item))
                         input.checked.hide(type='checkbox')

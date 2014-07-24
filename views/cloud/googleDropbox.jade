@@ -23,17 +23,20 @@ block content
                         i.fa.fa-spinner.fa-spin.fa-2x.pull-right.to-loader
 
                 .row.col-row
-                    .col-xs-6.col-md-6.col-single.from
+                    .col-xs-6.col-md-6.col-single.from(data-direction='from')
                         .list-group.empty
                             span.list-group-item.text-center
                                 - if (panels.first.show)
                                     i.fa.fa-spinner.fa-spin
                                 - else
                                     a.btn.btn-danger(href='#{panels.first.authUrl}') Authenticate
-                    .col-xs-6.col-md-6.col-single.to
+                    .col-xs-6.col-md-6.col-single.to(data-direction='to')
                         .list-group.empty
                             span.list-group-item.text-center
                                 - if (panels.second.show)
                                     i.fa.fa-spinner.fa-spin
                                 - else
                                     a.btn.btn-danger(href='#{panels.second.authUrl}') Authenticate
+                .row
+                    .col-xs-4.col-md-4.col-xs-offset-4.text-center
+                        a.btn.btn-success.btn-block#startSync Start Sync

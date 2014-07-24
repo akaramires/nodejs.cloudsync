@@ -1,3 +1,10 @@
+- function bytesToSize(bytes) {
+-     var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+-     if (bytes == 0) return '0 Byte';
+-     var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+-     return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+- }
+
 .todo.file-list
     - if(typeof list !== "undefined")
         .todo-search
@@ -11,8 +18,13 @@
                         - else
                             .todo-icon.fa.fa-file-o
                         .todo-content
-                            h4.todo-name
+                            h4.todo-name.pull-left
                                 = ' ' + item.title
+                            span.todo-size.pull-right
+                                - if (item.mimeType === 'application/vnd.google-apps.folder')
+                                    | -
+                                - else
+                                    = bytesToSize(item.fileSize)
                             input.json-data(type='hidden', value=JSON.stringify(item))
                             input.checked.hide(type='checkbox')
             - else
