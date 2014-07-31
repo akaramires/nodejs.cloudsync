@@ -263,11 +263,9 @@
                         $btn.button('reset');
                     },
                     success   : function (response) {
-
-//                        if (response.status) {
-//                            window.Transfers.clear('google');
-//                            window.Transfers.clear('dropbox');
-//                        }
+                        if (response.status) {
+                            window.GooglePanel.exec({id: window.GooglePanel.parentIds[window.GooglePanel.parentIds.length - 1]}, false);
+                        }
                     }
                 });
             });

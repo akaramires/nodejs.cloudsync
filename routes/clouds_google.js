@@ -4,7 +4,6 @@ var config = require('../config'),
 
 var request = require('request'),
     fs = require('fs'),
-    util = require('util'),
     path = require('path'),
     http = require('http');
 
@@ -142,26 +141,47 @@ exports.routes = {
                 access_token: req.user.google.access_token
             });
 
+            console.log(transfers);
             for (var i in transfers) {
                 if (typeof transfers[i] !== 'function') {
-//                    var media = clientDB.stream(transfers[i].path);
-//                    var w = fs.createWriteStream(transfers[i].title);
-//                    media.pipe(w);
+                    console.log('start upload: ', transfers[i].title);
 
-                    var media = fs.createReadStream(__filename);
+                    var total = 0;
+                    var media = clientDB.stream(transfers[i].path);
+                    media.addListener('data', function (part) {
+                        total += part.length;
+                        console.log((total/1024/1024).toFixed(2) + ' mb');
+                    });
 
                     drive.files.insert({
-                        media: {
+                        media   : media,
+                        resource: {
+                            title   : transfers[i].title,
                             mimeType: transfers[i].mime_type,
-                            body    : media,
                             parents : [
                                 { id: destinationID }
                             ]
                         },
-                        auth : oauth2Client
-                    }, function (err, response) {
-                        console.log('error:', err, 'inserted:', response.id);
+                        auth    : oauth2Client
+                    }, function (err, insertRes) {
+                        console.log(1);
+                        res.writeHead(200, {"Content-Type": "application/json"});
+                        if (!!err) {
+                            res.end(JSON.stringify({
+                                status: false
+                            }));
+                        } else {
+                            res.end(JSON.stringify({
+                                status: true,
+                                msg   : 'Inserted file ID: ' + insertRes.id
+                            }));
+                        }
                     });
+
+                    res.end(JSON.stringify({
+                        status: true,
+                        msg   : 'Inserted file ID: '
+                    }));
                 }
             }
         }
