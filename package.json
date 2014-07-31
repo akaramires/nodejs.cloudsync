@@ -1,5 +1,5 @@
 {
-    "name"        : "MySite",
+    "name"        : "CloudSync",
     "version"     : "0.0.1",
     "private"     : "true",
     "dependencies": {
@@ -16,8 +16,8 @@
         "express-session"        : "1.2.1",
         "connect-redis"          : "2.0.0",
         "i18n"                   : "0.4.1",
-        "googleapis"             : "0.7.0",
-        "request"                : "2.36.0",
+        "googleapis"             : "1.0.2",
+        "request"                : "2.39.0",
         "qs"                     : "0.6.6",
         "forms"                  : "git://github.com/caolan/forms.git#file_input",
         "dbox"                   : "0.5.6",

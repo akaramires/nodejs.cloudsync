@@ -5,8 +5,9 @@ var baseRoutes = require('./clouds_base').routes,
     dropboxRoutes = require('./clouds_dropbox').routes;
 
 module.exports = function (app, auth) {
-    app.get('/cloud-sync', auth, baseRoutes.cloudSync);
-    app.get('/cloud-sync/google-dropbox', auth, baseRoutes.googleDropbox);
+//    app.get('/cloud-sync', auth, baseRoutes.cloudSync);
+//    app.get('/cloud-sync/google-dropbox', auth, baseRoutes.googleDropbox);
+    app.get('/cloud-sync', auth, baseRoutes.googleDropbox);
 
     app.get('/cloud-sync/google/auth', auth, googleRoutes.auth);
     app.get('/cloud-sync/google/refresh', auth, googleRoutes.refresh);

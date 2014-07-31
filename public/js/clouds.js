@@ -226,57 +226,54 @@
     var Transfers = (function () {
 
         function Transfers() {
+            this.assignEvents();
         }
 
-        Transfers.prototype.renderModal = function () {
-            var toDBoxTransfers = window.GooglePanel.transfers;
-            var toDBoxHtml = '';
-            if (Object.size(toDBoxTransfers)) {
-                for (var key in toDBoxTransfers) {
-                    toDBoxHtml += '<li><a>' + toDBoxTransfers[key].title + '<span class="badge pull-right">' + bytesToSize(toDBoxTransfers[key].fileSize) + '</span></a></li>';
+        Transfers.prototype.assignEvents = function () {
+            $(document).on('click', '#startSync', function (e) {
+                var $btn = $(this);
+                var data = JSON.parse($('body').find('.file-list li.current-file-focus input.json-data').val());
+
+                var cloudType = null;
+                var destinationID = null;
+                var transfers = [];
+
+                if (data.hasOwnProperty('alternateLink') && data.alternateLink.indexOf('google') > -1) {
+                    // Google
+                    cloudType = 'dropbox';
+                    transfers.push(data);
+                } else if (data.hasOwnProperty('root') && data.root.indexOf('dropbox') > -1) {
+                    // Dropbox
+                    cloudType = 'google';
+                    destinationID = window.GooglePanel.parentIds[window.GooglePanel.parentIds.length - 1]
+                    transfers.push(data);
                 }
-            } else {
-                toDBoxHtml += '<li class="disabled"><a>Empty</a></li>';
-            }
-            $('#transfersToDropbox').html(toDBoxHtml);
 
-            var toGDriveTransfers = window.DropboxPanel.transfers;
-            var toGDriveHtml = '';
-            if (Object.size(toGDriveTransfers)) {
-                for (var key in toGDriveTransfers) {
-                    toGDriveHtml += '<li><a>' + toGDriveTransfers[key].title + '<span class="badge pull-right">' + toGDriveTransfers[key].size + '</span></a></li>';
-                }
-            } else {
-                toGDriveHtml += '<li class="disabled"><a>Empty</a></li>';
-            }
-            $('#transfersToGoogle').html(toGDriveHtml);
+                $.ajax({
+                    url       : getAjaxUrl(cloudType, 'upload'),
+                    type      : 'POST',
+                    data      : {
+                        transfers    : transfers,
+                        destinationID: destinationID
+                    },
+                    beforeSend: function () {
+                        return true;
+                    },
+                    complete  : function () {
+                        $btn.button('reset');
+                    },
+                    success   : function (response) {
 
-            $(".pendingTransfers #countTransfers").html((Object.size(toDBoxTransfers) + Object.size(toGDriveTransfers)));
-        };
-
-        Transfers.prototype.clear = function (type) {
-            var winGoogle = window.GooglePanel;
-            var winDropbox = window.DropboxPanel;
-
-            if (type == 'google') {
-                winGoogle.transfers = {};
-                $('#transfersToGoogle').html('<li class="disabled"><a>Empty</a></li>');
-                $(".pendingTransfers #countTransfers").html(Object.size(winGoogle.transfers) + Object.size(winDropbox.transfers));
-                winGoogle.exec({id: winGoogle.parentIds[winGoogle.parentIds.length - 1]}, false);
-            }
-
-            if (type == 'dropbox') {
-                winDropbox.transfers = {};
-                $('#transfersToGoogle').html('<li class="disabled"><a>Empty</a></li>');
-                $(".pendingTransfers #countTransfers").html(Object.size(winGoogle.transfers) + Object.size(winDropbox.transfers));
-                winDropbox.exec({path: winDropbox.parentIds[winDropbox.parentIds.length - 1]}, false);
-            }
-
-            $('#pendingTransfers').modal('hide');
+//                        if (response.status) {
+//                            window.Transfers.clear('google');
+//                            window.Transfers.clear('dropbox');
+//                        }
+                    }
+                });
+            });
         };
 
         return Transfers;
-
     })();
 
     var KeyCodeEvents = (function () {

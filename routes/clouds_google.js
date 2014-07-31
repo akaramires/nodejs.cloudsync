@@ -4,15 +4,18 @@ var config = require('../config'),
 
 var request = require('request'),
     fs = require('fs'),
+    util = require('util'),
     path = require('path'),
     http = require('http');
 
 var config_google = config.cloud.google,
-    OAuth2Client = googleapis.OAuth2Client,
+    OAuth2 = googleapis.auth.OAuth2,
     client = config_google.CLIENT_ID,
     secret = config_google.CLIENT_SECRET,
-    redirect = config_google.REDIRECT_URL,
-    oauth2Client = new OAuth2Client(client, secret, redirect),
+    redirect = config_google.REDIRECT_URL;
+
+var oauth2Client = new OAuth2(client, secret, redirect),
+    drive = googleapis.drive('v2'),
     drive_auth_url = oauth2Client.generateAuthUrl({
         access_type: config_google.ACCESS_TYPE,
         scope      : config_google.SCOPE
@@ -50,70 +53,65 @@ exports.routes = {
                 req.body.parent = {id: 'root'};
             }
 
-            googleapis.discover('drive', 'v2')
-                .execute(function (err, client) {
-                    if (!!err) {
-                        console.log('failure', err);
-                        return;
+            oauth2Client.setCredentials({
+                access_token: req.user.google.access_token
+            });
+
+            var initialParams = {
+                q   : '"' + req.body.parent.id + '" in parents and trashed = false',
+                auth: oauth2Client
+            };
+
+            var retrievePageOfFiles = function (params, result) {
+                for (var key in params) {
+                    if (params.hasOwnProperty(key)) {
+                        initialParams[key] = params[key];
                     }
+                }
 
-                    if (!oauth2Client.credentials) {
-                        oauth2Client.credentials = req.user.google
-                    }
+                drive.files.list(initialParams, function (err, response) {
+                    if (!!err || response === null) {
+                        console.log('error', err);
 
-                    var $_page = 0;
-                    var retrievePageOfFiles = function (request, result) {
-                        request.execute(function (err, resp) {
-                            if (!!err || resp === null) {
-                                res.render('cloud/refresh', {
-                                    url: '/cloud-sync/google/refresh'
-                                }, function (err, html) {
-                                    res.writeHead(200, {"Content-Type": "application/json"});
-                                    res.end(JSON.stringify({
-                                        status: false,
-                                        msg   : 'refresh',
-                                        html  : html
-                                    }));
-                                });
-                            } else {
-                                result = result.concat(resp.items);
-                                var nextPageToken = resp.nextPageToken;
-                                if (nextPageToken) {
-                                    $_page++;
-                                    request = client.drive.files.list({
-                                        'pageToken': nextPageToken,
-                                        'q'        : "'" + req.body.parent.id + "' in parents and trashed = false"
-                                    }).withAuthClient(oauth2Client);
-
-                                    retrievePageOfFiles(request, result);
-                                } else {
-                                    result.sort(function (a, b) {
-                                        if (a.title < b.title)
-                                            return -1;
-                                        if (a.title > b.title)
-                                            return 1;
-                                        return 0;
-                                    });
-
-                                    res.render('cloud/row-google', {
-                                        list: result
-                                    }, function (err, html) {
-                                        res.writeHead(200, {"Content-Type": "application/json"});
-                                        res.end(JSON.stringify({
-                                            status: true,
-                                            html  : html
-                                        }));
-                                    });
-                                }
-                            }
+                        res.render('cloud/refresh', {
+                            url: '/cloud-sync/google/refresh'
+                        }, function (err, html) {
+                            res.writeHead(200, {"Content-Type": "application/json"});
+                            res.end(JSON.stringify({
+                                status: false,
+                                msg   : 'refresh',
+                                html  : html
+                            }));
                         });
-                    };
+                    } else {
+                        result = result.concat(response.items);
+                        var nextPageToken = response.nextPageToken;
+                        if (nextPageToken) {
+                            retrievePageOfFiles({ pageToken: nextPageToken }, result);
+                        } else {
+                            result.sort(function (a, b) {
+                                if (a.title < b.title)
+                                    return -1;
+                                if (a.title > b.title)
+                                    return 1;
+                                return 0;
+                            });
 
-                    var initialRequest = client.drive.files.list({
-                        'q': "'" + req.body.parent.id + "' in parents and trashed = false"
-                    }).withAuthClient(oauth2Client);
-                    retrievePageOfFiles(initialRequest, []);
+                            res.render('cloud/row-google', {
+                                list: result
+                            }, function (err, html) {
+                                res.writeHead(200, {"Content-Type": "application/json"});
+                                res.end(JSON.stringify({
+                                    status: true,
+                                    html  : html
+                                }));
+                            });
+                        }
+                    }
                 });
+            };
+
+            retrievePageOfFiles(initialParams, []);
         }
     },
 
@@ -140,105 +138,32 @@ exports.routes = {
                 transfers = req.body.transfers,
                 destinationID = req.body.destinationID;
 
-            googleapis.discover('drive', 'v2')
-                .execute(function (err, client) {
-                    if (!!err) {
-                        console.log('failure', err);
-                        return;
-                    }
+            oauth2Client.setCredentials({
+                access_token: req.user.google.access_token
+            });
 
-                    if (!oauth2Client.credentials) {
-                        oauth2Client.credentials = req.user.google
-                    }
+            for (var i in transfers) {
+                if (typeof transfers[i] !== 'function') {
+//                    var media = clientDB.stream(transfers[i].path);
+//                    var w = fs.createWriteStream(transfers[i].title);
+//                    media.pipe(w);
 
-                    for (var i in transfers) {
-                        var media = clientDB.stream(transfers[i].path);
-                        console.log(media);
-//                        request.post({
-//                            'url'      : 'https://www.googleapis.com/upload/drive/v2/files',
-//                            'qs'       : {
-//                                'uploadType': 'multipart'
-//                            },
-//                            'headers'  : {
-//                                'Authorization': 'Bearer ' + req.user.google.access_token
-//                            },
-//                            'multipart': [
-//                                {
-//                                    'Content-Type': 'application/json; charset=UTF-8',
-//                                    'body'        : JSON.stringify({
-//                                        'title'  : transfers[i].title,
-//                                        'parents': [
-//                                            {
-//                                                'id': destinationID
-//                                            }
-//                                        ]
-//                                    })
-//                                },
-//                                {
-//                                    'Content-Type': transfers[i].mime_type,
-//                                    'body'        : media
-//                                }
-//                            ]
-//                        }, function (err, httpResponse, body) {
-//                            var responseObj = {};
-//                            if (httpResponse.statusCode == 200) {
-//                                if (err) {
-//                                    responseObj.status = false;
-//                                    responseObj.message = err.message;
-//                                } else {
-//                                    responseObj.status = true;
-//                                }
-//                                res.writeHead(200, {"Content-Type": "application/json"});
-//                                res.end(JSON.stringify(responseObj));
-//                            } else {
-//                                responseObj.status = false;
-//                                responseObj.message = JSON.parse(body).error.message;
-//                                res.writeHead(200, {"Content-Type": "application/json"});
-//                                res.end(JSON.stringify(responseObj));
-//                            }
-//                        });
-//                        var media = fs.createReadStream(__filename);
-//                        var writable = fs.createWriteStream(transfers[i].title + '.pdf');
-//                        media.pipe(writable);
+                    var media = fs.createReadStream(__filename);
 
-
-//                        clientDB.get(transfers[i].path, function (status, reply, metadata) {
-
-//                        client.drive.files
-//                            .insert({
-//                                title   : transfers[i].title,
-//                                mimeType: transfers[i].mime_type
-//                            })
-//                            .withMedia('application/javascript', media)
-////                            .withMedia(transfers[i].mime_type, reply)
-//                            .withAuthClient(oauth2Client)
-//                            .execute(function (err, response) {
-//                                var responseObj = {};
-//
-//                                if (err) {
-//                                    responseObj.status = false;
-//                                    responseObj.message = err.message;
-//                                } else {
-//                                    responseObj.status = true;
-//                                }
-//
-//                                res.writeHead(200, {"Content-Type": "application/json"});
-//                                res.end(JSON.stringify(responseObj));
-////                                if (response.statusCode == 200) {
-////                                    res.writeHead(200, {"Content-Type": "application/json"});
-////                                    res.end(JSON.stringify(responseObj));
-////                                } else {
-////                                    responseObj.status = false;
-////                                    responseObj.message = JSON.parse(body).error.message;
-////                                    res.writeHead(200, {"Content-Type": "application/json"});
-////                                    res.end(JSON.stringify(responseObj));
-////                                }
-//                            });
-
-//                        });
-
-                    }
-                });
+                    drive.files.insert({
+                        media: {
+                            mimeType: transfers[i].mime_type,
+                            body    : media,
+                            parents : [
+                                { id: destinationID }
+                            ]
+                        },
+                        auth : oauth2Client
+                    }, function (err, response) {
+                        console.log('error:', err, 'inserted:', response.id);
+                    });
+                }
+            }
         }
     },
     callback: function (req, res) {
