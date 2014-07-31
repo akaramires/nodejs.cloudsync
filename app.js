@@ -12,9 +12,13 @@ var express = require('express'),
 
 var app = express();
 
+var env = process.argv[2] || process.env.NODE_ENV || 'development';
+global.env = env;
+
 app.configure(function () {
     app.disable('x-powered-by');
-    app.set('port', config.site.port);
+    app.set('env', env);
+    app.set('port', config.site[app.get('env')].port);
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
     app.set('view options', { layout: false });
@@ -22,9 +26,9 @@ app.configure(function () {
     app.use(express.logger('dev'));
     app.use(express.bodyParser({ keepExtensions: true }))
     app.use(express.methodOverride());
-    app.use(express.cookieParser(config.site.cookieSecret));
+    app.use(express.cookieParser(config.site[app.get('env')].cookieSecret));
     app.use(express.session({
-        secret: config.site.sessionSecret,
+        secret: config.site[app.get('env')].sessionSecret,
         store : new RedisStore
     }));
     app.use(passport.initialize());
@@ -57,5 +61,5 @@ mongoose.connect(config.mongoose.url);
 require('./routes')(app);
 
 app.listen(app.get('port'), function () {
-    console.log("Application started at " + config.site.baseUrl);
+    console.log("Application started at " + config.site[app.get('env')].baseUrl + ' in "' + app.get('env') + '" mode');
 });

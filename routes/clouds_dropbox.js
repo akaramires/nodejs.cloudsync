@@ -1,5 +1,5 @@
 var config = require('../config'),
-    config_dropbox = config.cloud.dropbox,
+    config_dropbox = config.cloud[global.env].dropbox,
     dbox = require("dbox"),
     dboxApp = dbox.app({
         'app_key'   : config_dropbox.CLIENT_ID,

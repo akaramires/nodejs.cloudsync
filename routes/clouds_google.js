@@ -8,7 +8,7 @@ var request = require('request'),
     path = require('path'),
     http = require('http');
 
-var config_google = config.cloud.google,
+var config_google = config.cloud[global.env].google,
     OAuth2 = googleapis.auth.OAuth2,
     client = config_google.CLIENT_ID,
     secret = config_google.CLIENT_SECRET,
@@ -126,7 +126,7 @@ exports.routes = {
                 status: false
             }));
         } else {
-            var config_dropbox = config.cloud.dropbox,
+            var config_dropbox = config.cloud[global.env].dropbox,
                 dbox = require("dbox"),
                 dboxApp = dbox.app({
                     'app_key'   : config_dropbox.CLIENT_ID,
