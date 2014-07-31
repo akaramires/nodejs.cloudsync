@@ -18,8 +18,8 @@ exports.routes = {
             dboxApp.requesttoken(function (status, request_token) {
                 req.session.dboxStore.request_token = request_token;
 
-                res.redirect(config.cloud.dropbox.AUTH_URL + '?oauth_token=' + request_token.oauth_token +
-                    '&oauth_callback=' + config.cloud.dropbox.REDIRECT_URL);
+                res.redirect(config_dropbox.AUTH_URL + '?oauth_token=' + request_token.oauth_token +
+                    '&oauth_callback=' + config_dropbox.REDIRECT_URL);
                 res.end();
             });
         } else {
