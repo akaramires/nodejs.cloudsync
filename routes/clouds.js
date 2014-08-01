@@ -1,10 +1,11 @@
 require('../prototype');
 
-var baseRoutes = require('./clouds_base').routes,
-    googleRoutes = require('./clouds_google').routes,
-    dropboxRoutes = require('./clouds_dropbox').routes;
-
 module.exports = function (app, auth) {
+    var baseRoutes = require('./clouds_base').routes,
+        googleRoutes = require('./clouds_google').routes(app),
+        dropboxRoutes = require('./clouds_dropbox').routes;
+
+
 //    app.get('/cloud-sync', auth, baseRoutes.cloudSync);
 //    app.get('/cloud-sync/google-dropbox', auth, baseRoutes.googleDropbox);
     app.get('/cloud-sync', auth, baseRoutes.googleDropbox);

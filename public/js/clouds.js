@@ -27,11 +27,8 @@
         GooglePanel.prototype.assignEvents = function () {
             var self = this;
 
-//            this.$colSingleFrom.on('click', '.todo.file-list li.file', function (e) {
-//                $(this).toggleClass('todo-done');
-//            });
-
             this.$colSingleFrom.on('click', '.todo.file-list li.folder', function (e) {
+                $('#startSync').attr('disabled', true);
                 var data = JSON.parse($(this).find('.json-data').val());
                 self.exec(data, $(this));
             });
@@ -131,11 +128,8 @@
         DropboxPanel.prototype.assignEvents = function () {
             var self = this;
 
-//            this.$colSingleTo.on('click', '.todo.file-list li.file', function (e) {
-//                $(this).toggleClass('todo-done');
-//            });
-
             this.$colSingleTo.on('click', '.todo.file-list li.folder', function (e) {
+                $('#startSync').attr('disabled', true);
                 var data = JSON.parse($(this).find('.json-data').val());
                 self.exec(data, $(this));
             });
@@ -144,36 +138,6 @@
                 self.parentIds.pop();
                 self.exec({path: self.parentIds[self.parentIds.length - 1]}, false);
             });
-
-            $(document).on('click', '#startTransferToGoogle', function (e) {
-                var $btn = $(this);
-
-                $.ajax({
-                    url       : getAjaxUrl('google', 'upload'),
-                    type      : 'POST',
-                    data      : {
-                        transfers    : self.transfers,
-                        destinationID: window.GooglePanel.parentIds[window.GooglePanel.parentIds.length - 1]
-                    },
-                    beforeSend: function () {
-                        if (Object.size(self.transfers)) {
-                            $btn.button('loading');
-                            return true;
-                        }
-                        return false;
-                    },
-                    complete  : function () {
-                        $btn.button('reset');
-                    },
-                    success   : function (response) {
-                        if (response.status) {
-                            window.Transfers.clear('google');
-                            window.Transfers.clear('dropbox');
-                        }
-                    }
-                });
-            });
-
         };
 
         DropboxPanel.prototype.exec = function (parent, target) {
@@ -263,9 +227,7 @@
                         $btn.button('reset');
                     },
                     success   : function (response) {
-                        if (response.status) {
-                            window.GooglePanel.exec({id: window.GooglePanel.parentIds[window.GooglePanel.parentIds.length - 1]}, false);
-                        }
+                        showNoty(response.msg, response.type);
                     }
                 });
             });
@@ -334,9 +296,10 @@
 
         Common.prototype.focus = function () {
             var self = this;
+            var $body = $('body');
 
-            $('body').find('.file-list li').removeClass('current-file-focus');
-            $('body').find('.file-list li:eq(0)').addClass('current-file-focus');
+            $body.find('.file-list li').removeClass('current-file-focus');
+            $body.find('.file-list li:eq(0)').addClass('current-file-focus');
 
             if (window.manInit) {
                 return;
@@ -345,9 +308,10 @@
                 this.checkType();
             }
 
-            $('body').on('click', '.todo.file-list li.file', function (e) {
+            $body.on('click', '.todo.file-list li.file', function (e) {
                 $('.todo.file-list li').removeClass('current-file-focus');
                 $(this).addClass('current-file-focus');
+                self.checkType();
             });
 
             $(document).on('keydown', function (e) {
@@ -398,6 +362,7 @@
 
         window.manInit = false;
         window.Common = new Common;
+
     });
 
 }).call(this);
@@ -409,3 +374,27 @@ function bytesToSize(bytes) {
     return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
 }
 
+getSocket().on('fileUpload', function (data) {
+    if (data.type == 'dropbox') {
+        var $file = $('.file[data-path="' + data.path + '"]');
+
+        if (!$file.hasClass('progress')) {
+            $file
+                .addClass('progress')
+                .append('<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="' + data.percent + '" aria-valuemin="0" aria-valuemax="100" style="width: ' + data.percent + '%"></div>');
+        } else {
+            $file.find('.progress-bar').css('width', data.percent + '%');
+        }
+
+        if (data.progress == 'end' && data.percent == 100) {
+            $file.removeClass('progress');
+            $file.find('.progress-bar').remove();
+
+            showNoty(data.msg, data.status);
+            setTimeout(function () {
+                window.GooglePanel.exec({id: window.GooglePanel.parentIds[window.GooglePanel.parentIds.length - 1]}, false);
+            }, 3000);
+        }
+    }
+
+});

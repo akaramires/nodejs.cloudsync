@@ -1,3 +1,6 @@
+.msg-flash {
+  display: none;
+}
 .user-details {
   position: relative;
   padding: 0;
@@ -215,6 +218,29 @@
 .file-list li.file {
   background: #34495e 92% center no-repeat;
 }
+.file-list li.file.progress {
+  height: 41px;
+  border-radius: 0;
+  margin: 1px 0 0;
+  overflow: hidden;
+  position: relative;
+}
+.file-list li.file.progress > .progress-bar {
+  height: 41px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #1abc9c;
+  opacity: 0.5;
+  background-image: -webkit-linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent);
+  background-image: -o-linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent);
+  background-image: linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent);
+  -o-animation: progress-bar-stripes 2s linear infinite;
+  animation: progress-bar-stripes 2s linear infinite;
+  -webkit-animation: progress-bar-stripes 2s linear infinite;
+  -webkit-background-size: 40px 40px;
+  background-size: 40px 40px;
+}
 #pendingTransfers .transfer-list {
   margin-bottom: 20px;
 }
@@ -229,6 +255,11 @@
 .file-list li.current-file-focus {
   background-color: rgba(52,73,94,0.4);
   outline: 1px dotted;
+}
+.file.progress .todo-icon,
+.file.progress .todo-content {
+  color: #fff;
+  z-index: 99;
 }
 html {
   position: relative;
@@ -458,4 +489,31 @@ code {
   #pendingTransfers .modal-dialog {
     width: 90%;
   }
+}
+.noty-flat-theme:hover {
+  margin-left: -5px;
+}
+.noty-flat-theme .noty_bar {
+  background-color: #fff;
+  margin-bottom: 2px;
+}
+.noty-flat-theme .noty_bar.noty_type_warning {
+  color: #e67e22;
+  border-left: 3px solid #e67e22;
+}
+.noty-flat-theme .noty_bar.noty_type_success {
+  color: #2ecc71;
+  border-left: 3px solid #2ecc71;
+}
+.noty-flat-theme .noty_bar.noty_type_error {
+  color: #e74c3c;
+  border-left: 3px solid #e74c3c;
+}
+.noty-flat-theme .noty_bar.noty_type_info {
+  color: #3498db;
+  border-left: 3px solid #3498db;
+}
+.noty-flat-theme .noty_bar .noty_message {
+  font-size: 14px;
+  padding: 10px;
 }

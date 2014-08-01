@@ -116,6 +116,27 @@
     li.folder,
     li.file
         background #34495e 92% center no-repeat
+    li.file.progress
+        height: 41px;
+        border-radius: 0;
+        margin: 1px 0 0;
+        overflow: hidden;
+        position: relative;
+        > .progress-bar
+            height: 41px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: #1abc9c;
+            opacity: 0.5;
+            background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+            background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+            background-image: linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+            -o-animation: progress-bar-stripes 2s linear infinite;
+            animation: progress-bar-stripes 2s linear infinite;
+            -webkit-animation: progress-bar-stripes 2s linear infinite;
+            -webkit-background-size: 40px 40px;
+            background-size: 40px 40px;
 
 #pendingTransfers
     .transfer-list
@@ -132,3 +153,9 @@
     li.current-file-focus
         background-color: rgba(52, 73, 94, .4)
         outline: 1px dotted
+
+.file.progress
+    .todo-icon,
+    .todo-content
+        color white
+        z-index: 99;

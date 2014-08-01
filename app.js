@@ -57,9 +57,17 @@ passport.deserializeUser(Account.deserializeUser());
 // mongoose
 mongoose.connect(config.mongoose.url);
 
+var server = require('http').Server(app);
+io = require('socket.io')(server);
+
+io.on('connection', function (socket) {
+    app.set('socket', socket);
+});
+
+server.listen(app.get('port'), function () {
+    console.log("Application started at " + config.site[app.get('env')].baseUrl + ' in "' + app.get('env') + '" mode');
+});
+
 // routes
 require('./routes')(app);
 
-app.listen(app.get('port'), function () {
-    console.log("Application started at " + config.site[app.get('env')].baseUrl + ' in "' + app.get('env') + '" mode');
-});

@@ -24,25 +24,27 @@ html
             .page-content
                 - if(typeof messages !== "undefined")
                     - if (messages.error)
-                        .alert.alert-danger
+                        .msg-flash(data-type='danger')
                             span= messages.error
                     - if (messages.success)
-                        .alert.alert-success
+                        .msg-flash(data-type='success')
                             span= messages.success
                     - if (messages.info)
-                        .alert.alert-info
+                        .msg-flash(data-type='info')
                             span= messages.info
                     - if (messages.warning)
-                        .alert.alert-warning
+                        .msg-flash(data-type='warning')
                             span= messages.warning
 
                 block content
 
         include _includes/footer
 
+        script(src='/socket.io/socket.io.js')
         script(src='/js/__.js')
         script(src='/js/libs/jquery.min.js')
         script(src='/js/libs/bootstrap.min.js')
+        script(src='/js/libs/jquery.noty.min.js')
         script(src='/js/base.js')
         block scripts
         script(src='/js/main.js')
