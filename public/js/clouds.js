@@ -203,11 +203,10 @@
                 var transfers = [];
 
                 if (data.hasOwnProperty('alternateLink') && data.alternateLink.indexOf('google') > -1) {
-                    // Google
                     cloudType = 'dropbox';
+                    destinationID = window.DropboxPanel.parentIds[window.DropboxPanel.parentIds.length - 1]
                     transfers.push(data);
                 } else if (data.hasOwnProperty('root') && data.root.indexOf('dropbox') > -1) {
-                    // Dropbox
                     cloudType = 'google';
                     destinationID = window.GooglePanel.parentIds[window.GooglePanel.parentIds.length - 1]
                     transfers.push(data);
