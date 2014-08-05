@@ -1,3 +1,5 @@
+var request = require('request');
+
 var config = require('../config'),
     config_dropbox = config.cloud[global.env].dropbox,
     dbox = require("dbox"),
@@ -107,20 +109,72 @@ exports.routes = function (app) {
                 var client = dboxApp.client(req.user.dropbox),
                     fs = require('fs');
 
+                var fileTypes = {
+                    '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    '.xltx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.template',
+                    '.potx': 'application/vnd.openxmlformats-officedocument.presentationml.template',
+                    '.ppsx': 'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
+                    '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                    '.sldx': 'application/vnd.openxmlformats-officedocument.presentationml.slide',
+                    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    '.dotx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
+                    '.xlam': 'application/vnd.ms-excel.addin.macroEnabled.12',
+                    '.xlsb': 'application/vnd.ms-excel.sheet.binary.macroEnabled.12'
+                };
+
                 for (var i in transfers) {
                     if (typeof transfers[i] !== 'function') {
-//                        drive.files.get({
-//                            fileId: transfers[i].id,
-//                            auth  : oauth2Client
-//                        }, function (err, response) {
-//                            if (!!err || response === null) {
-//                                console.log('error', err);
-//                            } else {
-//                                client.put('/test', fs.createReadStream(transfers[i].downloadUrl), function (status, reply) {
-//                                    console.log(reply)
-//                                })
-//                            }
-//                        });
+                        var downloadUrl = transfers[i].downloadUrl;
+
+                        var upload_id = null;
+                        var offset = 0;
+
+                        var requestGet = request.get({
+                            'url'    : downloadUrl,
+                            'headers': {
+                                'Authorization': 'Bearer ' + req.user.google.access_token
+                            }
+                        });
+
+//                        var requestGet = fs.createReadStream(__filename);
+//
+                        var requestPut = function (chunk, params) {
+                            client.chunk(chunk, params, function (status, reply) {
+                                if (upload_id === null) {
+                                    upload_id = reply.upload_id;
+                                }
+
+                                offset = reply.offset;
+                                console.log(upload_id, (offset / 1024 / 1024).toFixed(2) + ' mb');
+                                requestGet.resume();
+                            })
+                        };
+
+                        requestGet.on('data', function (chunk) {
+                            console.log('on data');
+                            var params = {};
+
+                            if (offset > 0) {
+                                params.offset = offset;
+                            }
+
+                            if (upload_id !== null) {
+                                params.upload_id = upload_id;
+                            }
+
+                            requestGet.pause();
+                            requestPut(chunk, params);
+                        });
+
+                        requestGet.on('end', function (chunk) {
+                            console.log('on end');
+                            client.commit_chunks(transfers[i].title, {
+                                upload_id: upload_id,
+                                overwrite: false
+                            }, function (status, reply) {
+                                console.log('File was uploaded', status, reply);
+                            })
+                        });
                     }
                 }
             }

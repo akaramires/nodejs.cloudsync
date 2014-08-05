@@ -20,7 +20,7 @@
         "request"                : "2.39.0",
         "qs"                     : "0.6.6",
         "forms"                  : "git://github.com/caolan/forms.git#file_input",
-        "dbox"                   : "0.5.6",
+        "dbox"                   : "git://github.com/christiangenco/node-dbox.git",
         "mailgun"                : "0.4.2",
         "socket.io"              : "1.0.6"
     }
