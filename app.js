@@ -48,6 +48,12 @@ app.configure('production', function () {
     app.use(express.errorHandler());
 });
 
+app.locals({
+    settings: {
+        ga: config.site[app.get('env')].ga_file
+    }
+});
+
 // passport config
 var Account = require('./models/account');
 passport.use(new LocalStrategy(Account.authenticate()));

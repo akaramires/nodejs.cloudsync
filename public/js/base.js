@@ -40,6 +40,7 @@ function showNoty(content, type) {
     });
 }
 
+
 function getSocket() {
     return io.connect('http://localhost');
 }

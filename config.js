@@ -9,13 +9,15 @@ module.exports = {
             baseUrl      : 'http://127.0.0.1:3030/',
             port         : 3030,
             cookieSecret : '8mjwB7nPhfHILeeQFkjzu1Nl91KdD7kxsxLDfStc',
-            sessionSecret: 'bxWEV7W126v9DlFJQrLSc60gqx8i3apNGDkYLKSf'
+            sessionSecret: 'bxWEV7W126v9DlFJQrLSc60gqx8i3apNGDkYLKSf',
+            ga_file      : 'ga.local.js'
         },
         production : {
             baseUrl      : 'http://localhost:3000/',
             port         : 3000,
             cookieSecret : 'kPKFeqhemadOfq46jPg0O9FkUDH03ITLvcufHxgC',
-            sessionSecret: 'VnLxoGqMzGczxW6WdeURX9DaiKAYw33sPivgBpGC'
+            sessionSecret: 'VnLxoGqMzGczxW6WdeURX9DaiKAYw33sPivgBpGC',
+            ga_file      : 'ga.eatech.js'
         }
     },
     cloud   : {

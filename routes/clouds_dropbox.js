@@ -109,22 +109,28 @@ exports.routes = function (app) {
                 var client = dboxApp.client(req.user.dropbox),
                     fs = require('fs');
 
+
                 var fileTypes = {
-                    '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                    '.xltx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.template',
-                    '.potx': 'application/vnd.openxmlformats-officedocument.presentationml.template',
-                    '.ppsx': 'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
-                    '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-                    '.sldx': 'application/vnd.openxmlformats-officedocument.presentationml.slide',
-                    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                    '.dotx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
-                    '.xlam': 'application/vnd.ms-excel.addin.macroEnabled.12',
-                    '.xlsb': 'application/vnd.ms-excel.sheet.binary.macroEnabled.12'
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'        : '.xlsx',
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.template'     : '.xltx',
+                    'application/vnd.openxmlformats-officedocument.presentationml.template'    : '.potx',
+                    'application/vnd.openxmlformats-officedocument.presentationml.slideshow'   : '.ppsx',
+                    'application/vnd.openxmlformats-officedocument.presentationml.presentation': '.pptx',
+                    'application/vnd.openxmlformats-officedocument.presentationml.slide'       : '.sldx',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'  : '.docx',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.template'  : '.dotx',
+                    'application/vnd.ms-excel.addin.macroEnabled.12'                           : '.xlam',
+                    'application/vnd.ms-excel.sheet.binary.macroEnabled.12'                    : '.xlsb'
                 };
 
                 for (var i in transfers) {
                     if (typeof transfers[i] !== 'function') {
-                        var downloadUrl = transfers[i].downloadUrl;
+                        var downloadUrl, fileTitle;
+
+                        downloadUrl = transfers[i].downloadUrl;
+                        fileTitle = transfers[i].title;
+
+//                        var fileExtension = (fileTypes[transfers[i].mimeType] !== undefined ) ? fileTypes[transfers[i].mimeType] : '';
 
                         var upload_id = null;
                         var offset = 0;
@@ -168,13 +174,19 @@ exports.routes = function (app) {
 
                         requestGet.on('end', function (chunk) {
                             console.log('on end');
-                            client.commit_chunks(transfers[i].title, {
+                            client.commit_chunks(fileTitle, {
                                 upload_id: upload_id,
                                 overwrite: false
                             }, function (status, reply) {
                                 console.log('File was uploaded', status, reply);
                             })
                         });
+
+                        res.writeHead(200, {"Content-Type": "application/json"});
+                        res.end(JSON.stringify({
+                            type: 'success',
+                            msg : 'Uploading the "' + transfers[i].title + '" started'
+                        }));
                     }
                 }
             }
