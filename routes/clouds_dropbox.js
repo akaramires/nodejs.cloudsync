@@ -1,5 +1,7 @@
 var request = require('request');
 
+var Prototypes = require('../prototype');
+
 var config = require('../config'),
     config_dropbox = config.cloud[global.env].dropbox,
     dbox = require("dbox"),
@@ -50,18 +52,28 @@ exports.routes = function (app) {
 
                 if (client != null) {
                     client.metadata(path, {}, function (status, result) {
+                        var folders = [];
+                        var files = [];
+
                         for (var i in result.contents) {
                             if (result.contents[i].path != undefined) {
                                 var title = result.contents[i].path.split('/');
                                 result.contents[i].title = title[title.length - 1];
-//
-//                            client.get(result.contents[i].path, function (status, reply, metadata) {
-//                                res.send(reply);
-//                            })
+
+                                if (result.contents[i].is_dir == true) {
+                                    folders.push(result.contents[i]);
+                                } else {
+                                    files.push(result.contents[i]);
+                                }
                             }
                         }
+
+                        folders = Prototypes.sort(folders, 'title');
+                        files = Prototypes.sort(files, 'title');
+                        var merged = folders.concat(files);
+
                         res.render('cloud/row-dropbox', {
-                            list: result.contents
+                            list: merged
                         }, function (err, html) {
                             res.writeHead(200, {"Content-Type": "application/json"});
                             res.end(JSON.stringify({
@@ -134,6 +146,9 @@ exports.routes = function (app) {
                                 msg : 'Unfortunately this file format is not supported'
                             }));
                         } else {
+                            var partOffset = 0;
+                            var totalOffset = 0;
+
                             requestGet
                                 .on('data', function (chunk) {
                                     console.log('on data');
@@ -147,6 +162,9 @@ exports.routes = function (app) {
                                         params.upload_id = upload_id;
                                     }
 
+                                    partOffset += chunk.length;
+                                    totalOffset += chunk.length;
+
                                     requestGet.pause();
                                     client.chunk(chunk, params, function (status, reply) {
                                         if (upload_id === null) {
@@ -156,6 +174,16 @@ exports.routes = function (app) {
                                         offset = reply.offset;
                                         console.log(upload_id, (offset / 1024 / 1024).toFixed(2) + ' mb');
                                         requestGet.resume();
+
+                                        if ((partOffset / 1024 / 1024) > 1) {
+                                            app.get('socket').emit('fileUpload', {
+                                                type   : "google",
+                                                id     : transfers[i].id,
+                                                title  : fileTitle,
+                                                percent: ((100 * totalOffset) / parseInt(transfers[i].fileSize)).toFixed(2)
+                                            });
+                                            partOffset = 0;
+                                        }
                                     });
                                 })
                                 .on('end', function () {
@@ -164,6 +192,16 @@ exports.routes = function (app) {
                                         overwrite: false
                                     }, function (status, reply) {
                                         console.log('File was uploaded', status, reply);
+                                    });
+
+                                    app.get('socket').emit('fileUpload', {
+                                        status  : 'success',
+                                        msg     : fileTitle + ' file upload is finished!',
+                                        type    : 'google',
+                                        id      : transfers[i].id,
+                                        title   : fileTitle,
+                                        progress: 'end',
+                                        percent : 100
                                     });
                                 })
                                 .on("error", function (err) {

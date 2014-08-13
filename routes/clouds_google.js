@@ -1,47 +1,49 @@
-var config = require('../config'),
-    googleapis = require('googleapis'),
-    AccountModel = require('../models/account');
-
-var request = require('request'),
-    fs = require('fs'),
-    path = require('path'),
-    http = require('http');
+var googleapis = require('googleapis'),
+    dbox = require("dbox"),
+    config = require('../config');
 
 var config_google = config.cloud[global.env].google,
     OAuth2 = googleapis.auth.OAuth2,
     client = config_google.CLIENT_ID,
-    secret = config_google.CLIENT_SECRET,
-    redirect = config_google.REDIRECT_URL;
-
-var oauth2Client = new OAuth2(client, secret, redirect),
+    oauth2Client = new OAuth2(client, config_google.CLIENT_SECRET, config_google.REDIRECT_URL),
     drive = googleapis.drive('v2'),
     drive_auth_url = oauth2Client.generateAuthUrl({
         access_type: config_google.ACCESS_TYPE,
         scope      : config_google.SCOPE
     });
 
+var config_dropbox = config.cloud[global.env].dropbox,
+    dboxApp = dbox.app({
+        app_key   : config_dropbox.CLIENT_ID,
+        app_secret: config_dropbox.CLIENT_SECRET,
+        root      : config_dropbox.ROOT
+    });
+
+var AccountModel = require('../models/account'),
+    Prototypes = require('../prototype');
+
 exports.routes = function (app) {
     return {
-        auth   : function (req, res) {
+        auth: function (req, res) {
             res.redirect(drive_auth_url);
         },
-        refresh: function (req, res) {
-            if (req.user.google.refresh_token === undefined) {
-                res.redirect(drive_auth_url);
-            } else {
-                oauth2Client.setCredentials(req.user.google);
-                oauth2Client.refreshAccessToken(function (err, tokens) {
-                    res.send(tokens);
-//                AccountModel.update({ _id: req.user._id }, { $set: {google: tokens} }, function (error, docs) {
-//                    if (error !== null) {
-//                        req.flash('error', error.message);
-//                    }
-//                    res.redirect('/cloud-sync/google-dropbox');
+//        refresh: function (req, res) {
+//            if (req.user.google.refresh_token === undefined) {
+//                res.redirect(drive_auth_url);
+//            } else {
+//                oauth2Client.setCredentials(req.user.google);
+//                oauth2Client.refreshAccessToken(function (err, tokens) {
+//                    res.send(tokens);
+////                AccountModel.update({ _id: req.user._id }, { $set: {google: tokens} }, function (error, docs) {
+////                    if (error !== null) {
+////                        req.flash('error', error.message);
+////                    }
+////                    res.redirect('/cloud-sync/google-dropbox');
+////                });
 //                });
-                });
-            }
-        },
-        get    : function (req, res) {
+//            }
+//        },
+        get : function (req, res) {
             if (!req.user.google || req.user.google.access_token === undefined) {
                 res.writeHead(200, {"Content-Type": "application/json"});
                 res.end(JSON.stringify({
@@ -92,16 +94,24 @@ exports.routes = function (app) {
                             if (nextPageToken) {
                                 retrievePageOfFiles({ pageToken: nextPageToken }, result);
                             } else {
-                                result.sort(function (a, b) {
-                                    if (a.title < b.title)
-                                        return -1;
-                                    if (a.title > b.title)
-                                        return 1;
-                                    return 0;
-                                });
+                                var folders = [];
+                                var files = [];
+
+                                for (var i in result) {
+                                    if (result[i].mimeType == 'application/vnd.google-apps.folder') {
+                                        folders.push(result[i]);
+                                    } else {
+                                        files.push(result[i]);
+                                    }
+                                }
+
+                                folders = Prototypes.sort(folders, 'title');
+                                files = Prototypes.sort(files, 'title');
+
+                                var merged = folders.concat(files);
 
                                 res.render('cloud/row-google', {
-                                    list: result
+                                    list: merged
                                 }, function (err, html) {
                                     res.writeHead(200, {"Content-Type": "application/json"});
                                     res.end(JSON.stringify({
@@ -126,14 +136,6 @@ exports.routes = function (app) {
                     status: false
                 }));
             } else {
-                var config_dropbox = config.cloud[global.env].dropbox,
-                    dbox = require("dbox"),
-                    dboxApp = dbox.app({
-                        'app_key'   : config_dropbox.CLIENT_ID,
-                        'app_secret': config_dropbox.CLIENT_SECRET,
-                        'root'      : config_dropbox.ROOT
-                    });
-
                 var clientDB = dboxApp.client(req.user.dropbox),
                     transfers = req.body.transfers,
                     destinationID = req.body.destinationID;
@@ -149,9 +151,9 @@ exports.routes = function (app) {
                         var partSize = 0;
                         var media = clientDB.stream(transfers[i].path);
 
-                        media.addListener('data', function (part) {
-                            partSize += part.length;
-                            totalSize += part.length;
+                        media.on('data', function (chunk) {
+                            partSize += chunk.length;
+                            totalSize += chunk.length;
                             totalProgress = (totalSize / 1024 / 1024).toFixed(1) + ' mb';
 
                             if ((partSize / 1024 / 1024) > 1) {
@@ -168,7 +170,7 @@ exports.routes = function (app) {
                             }
                         });
 
-                        media.addListener('end', function () {
+                        media.on('end', function () {
                             app.get('socket').emit('fileUpload', {
                                 status  : 'success',
                                 msg     : transfers[i].title + ' file upload is finished!',

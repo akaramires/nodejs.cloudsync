@@ -12,7 +12,7 @@
         ul
             - if (list.length > 0)
                 - each item in list
-                    li(class=(item.mimeType === 'application/vnd.google-apps.folder')? "folder" : "file")
+                    li(class=(item.mimeType === 'application/vnd.google-apps.folder')? "folder" : "file", data-id="google-#{item.id}")
                         - if (item.mimeType === 'application/vnd.google-apps.folder')
                             .todo-icon.fa.fa-folder-open-o
                         - else

@@ -396,4 +396,25 @@ getSocket().on('fileUpload', function (data) {
         }
     }
 
+    if (data.type == 'google') {
+        var $file = $('.file[data-id="google-' + data.id + '"]');
+
+        if (!$file.hasClass('progress')) {
+            $file
+                .addClass('progress')
+                .append('<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="' + data.percent + '" aria-valuemin="0" aria-valuemax="100" style="width: ' + data.percent + '%"></div>');
+        } else {
+            $file.find('.progress-bar').css('width', data.percent + '%');
+        }
+
+        if (data.progress == 'end' && data.percent == 100) {
+            $file.removeClass('progress');
+            $file.find('.progress-bar').remove();
+
+            showNoty(data.msg, data.status);
+            setTimeout(function () {
+//                window.GooglePanel.exec({id: window.GooglePanel.parentIds[window.GooglePanel.parentIds.length - 1]}, false);
+            }, 3000);
+        }
+    }
 });
