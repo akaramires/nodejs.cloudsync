@@ -109,20 +109,6 @@ exports.routes = function (app) {
                 var client = dboxApp.client(req.user.dropbox),
                     fs = require('fs');
 
-
-                var fileTypes = {
-                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'        : '.xlsx',
-                    'application/vnd.openxmlformats-officedocument.spreadsheetml.template'     : '.xltx',
-                    'application/vnd.openxmlformats-officedocument.presentationml.template'    : '.potx',
-                    'application/vnd.openxmlformats-officedocument.presentationml.slideshow'   : '.ppsx',
-                    'application/vnd.openxmlformats-officedocument.presentationml.presentation': '.pptx',
-                    'application/vnd.openxmlformats-officedocument.presentationml.slide'       : '.sldx',
-                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'  : '.docx',
-                    'application/vnd.openxmlformats-officedocument.wordprocessingml.template'  : '.dotx',
-                    'application/vnd.ms-excel.addin.macroEnabled.12'                           : '.xlam',
-                    'application/vnd.ms-excel.sheet.binary.macroEnabled.12'                    : '.xlsb'
-                };
-
                 for (var i in transfers) {
                     if (typeof transfers[i] !== 'function') {
                         var downloadUrl, fileTitle;
@@ -130,63 +116,66 @@ exports.routes = function (app) {
                         downloadUrl = transfers[i].downloadUrl;
                         fileTitle = transfers[i].title;
 
-//                        var fileExtension = (fileTypes[transfers[i].mimeType] !== undefined ) ? fileTypes[transfers[i].mimeType] : '';
-
-                        var upload_id = null;
-                        var offset = 0;
-
-                        var requestGet = request.get({
-                            'url'    : downloadUrl,
-                            'headers': {
-                                'Authorization': 'Bearer ' + req.user.google.access_token
-                            }
-                        });
-
-//                        var requestGet = fs.createReadStream(__filename);
-//
-                        var requestPut = function (chunk, params) {
-                            client.chunk(chunk, params, function (status, reply) {
-                                if (upload_id === null) {
-                                    upload_id = reply.upload_id;
+                        var upload_id = null,
+                            offset = 0,
+                            options = {
+                                'url'    : downloadUrl,
+                                'headers': {
+                                    'Authorization': 'Bearer ' + req.user.google.access_token
                                 }
+                            };
 
-                                offset = reply.offset;
-                                console.log(upload_id, (offset / 1024 / 1024).toFixed(2) + ' mb');
-                                requestGet.resume();
-                            })
-                        };
+                        var requestGet = request.get(options);
 
-                        requestGet.on('data', function (chunk) {
-                            console.log('on data');
-                            var params = {};
+                        if (config.settings.officeMimeTypes.indexOf(transfers[i].mimeType) >= 0) {
+                            res.writeHead(200, { "Content-Type": "application/json"});
+                            res.end(JSON.stringify({
+                                type: 'error',
+                                msg : 'Unfortunately this file format is not supported'
+                            }));
+                        } else {
+                            requestGet
+                                .on('data', function (chunk) {
+                                    console.log('on data');
+                                    var params = {};
 
-                            if (offset > 0) {
-                                params.offset = offset;
-                            }
+                                    if (offset > 0) {
+                                        params.offset = offset;
+                                    }
 
-                            if (upload_id !== null) {
-                                params.upload_id = upload_id;
-                            }
+                                    if (upload_id !== null) {
+                                        params.upload_id = upload_id;
+                                    }
 
-                            requestGet.pause();
-                            requestPut(chunk, params);
-                        });
+                                    requestGet.pause();
+                                    client.chunk(chunk, params, function (status, reply) {
+                                        if (upload_id === null) {
+                                            upload_id = reply.upload_id;
+                                        }
 
-                        requestGet.on('end', function (chunk) {
-                            console.log('on end');
-                            client.commit_chunks(fileTitle, {
-                                upload_id: upload_id,
-                                overwrite: false
-                            }, function (status, reply) {
-                                console.log('File was uploaded', status, reply);
-                            })
-                        });
+                                        offset = reply.offset;
+                                        console.log(upload_id, (offset / 1024 / 1024).toFixed(2) + ' mb');
+                                        requestGet.resume();
+                                    });
+                                })
+                                .on('end', function () {
+                                    client.commit_chunks(fileTitle, {
+                                        upload_id: upload_id,
+                                        overwrite: false
+                                    }, function (status, reply) {
+                                        console.log('File was uploaded', status, reply);
+                                    });
+                                })
+                                .on("error", function (err) {
+                                    console.log('error', error);
+                                });
 
-                        res.writeHead(200, {"Content-Type": "application/json"});
-                        res.end(JSON.stringify({
-                            type: 'success',
-                            msg : 'Uploading the "' + transfers[i].title + '" started'
-                        }));
+                            res.writeHead(200, { "Content-Type": "application/json"});
+                            res.end(JSON.stringify({
+                                type: 'success',
+                                msg : 'Uploading the "' + fileTitle + '" started'
+                            }));
+                        }
                     }
                 }
             }
@@ -207,5 +196,6 @@ exports.routes = function (app) {
             });
         }
     };
-};
+}
+;
 

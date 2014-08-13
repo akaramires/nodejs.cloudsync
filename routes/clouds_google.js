@@ -60,6 +60,7 @@ exports.routes = function (app) {
                 var initialParams = {
                     q   : '"' + req.body.parent.id + '" in parents and ' +
                         '(mimeType = "application/vnd.google-apps.folder" or not mimeType contains "google-apps") and ' +
+                        '(mimeType != "' + config.settings.officeMimeTypes.join('" and mimeType != "') + '") and ' +
                         'trashed = false',
                     auth: oauth2Client
                 };
