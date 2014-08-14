@@ -162,7 +162,11 @@ module.exports = function (forms, fields, validators, widgets) {
             return html;
         },
         LOGIN       : forms.create(helper.collectObj(FIELDS, 'username password')),
-        REGISTRATION: forms.create(helper.collectObj(FIELDS, 'username password confirm email first_name last_name')),
+        REGISTRATION: forms.create(helper.collectObj(FIELDS, 'first_name last_name username password confirm email')),
+//        REGISTRATION: forms.create({
+//            account : helper.collectObj(FIELDS, 'username password confirm')
+//            personal: helper.collectObj(FIELDS, 'first_name last_name email')
+//        }),
         ACCOUNT_INFO: forms.create(helper.collectObj(FIELDS, 'first_name last_name email photo')),
         CONTACT_US  : forms.create(CONTACT_US_FIELDS)
     }

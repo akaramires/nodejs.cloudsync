@@ -1,6 +1,7 @@
 (function ($, undefined) {
     $(document).ready(function () {
         activeMenu();
+        showNoties();
     });
 
     $(document).ajaxStop(function () {

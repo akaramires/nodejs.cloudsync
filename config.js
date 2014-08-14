@@ -7,6 +7,7 @@ module.exports = {
     site    : {
         title      : 'CloudSync!',
         development: {
+            host         : '127.0.0.1',
             baseUrl      : 'http://127.0.0.1:3030/',
             port         : 3030,
             cookieSecret : '8mjwB7nPhfHILeeQFkjzu1Nl91KdD7kxsxLDfStc',
@@ -14,6 +15,7 @@ module.exports = {
             ga_file      : 'ga.local.js'
         },
         production : {
+            host         : 'localhost',
             baseUrl      : 'http://localhost:3000/',
             port         : 3000,
             cookieSecret : 'kPKFeqhemadOfq46jPg0O9FkUDH03ITLvcufHxgC',

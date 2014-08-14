@@ -8,7 +8,6 @@ module.exports = function (app) {
     };
 
     require('./base')(app, auth);
-    require('./employees')(app, auth);
     require('./users')(app, auth);
     require('./clouds')(app, auth);
 };

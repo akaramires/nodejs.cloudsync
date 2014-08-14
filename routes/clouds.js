@@ -8,7 +8,6 @@ module.exports = function (app, auth) {
     app.get('/cloud-sync', auth, baseRoutes.googleDropbox);
 
     app.get('/cloud-sync/google/auth', auth, googleRoutes.auth);
-//    app.get('/cloud-sync/google/refresh', auth, googleRoutes.refresh);
     app.get('/cloud-sync/google/callback', auth, googleRoutes.callback);
     app.post('/cloud-sync/google/upload', auth, googleRoutes.upload);
     app.post('/cloud-sync/google/get', auth, googleRoutes.get);

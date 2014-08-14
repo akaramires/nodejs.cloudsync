@@ -54,6 +54,13 @@ app.locals({
     }
 });
 
+var server = http.Server(app);
+var io = require('socket.io')(server);
+
+io.on('connection', function (socket) {
+    app.set('socket', socket);
+});
+
 // passport config
 var Account = require('./models/account');
 passport.use(new LocalStrategy(Account.authenticate()));
@@ -63,17 +70,28 @@ passport.deserializeUser(Account.deserializeUser());
 // mongoose
 mongoose.connect(config.mongoose.url);
 
-var server = require('http').Server(app);
-io = require('socket.io')(server);
+mongoose.connection.on('connected', function () {
+    console.log('Mongoose connection open to ' + config.mongoose.url);
 
-io.on('connection', function (socket) {
-    app.set('socket', socket);
+    server.listen(app.get('port'), function () {
+        console.log("Application started at " + config.site[app.get('env')].baseUrl + ' in "' + app.get('env') + '" mode');
+    });
+
+    require('./routes')(app);
 });
 
-server.listen(app.get('port'), function () {
-    console.log("Application started at " + config.site[app.get('env')].baseUrl + ' in "' + app.get('env') + '" mode');
+mongoose.connection.on('error', function (err) {
+    console.log('Mongoose connection error: ' + err);
+
+    http.createServer(function (req, res) {
+        if (req.url != '/') {
+            res.writeHead(301, {Location: '/'});
+            res.end();
+        }
+
+        res.writeHead(200, {'Content-Type': 'text/plain'});
+        res.end('DB connection error');
+    }).listen(app.get('port'), config.site[app.get('env')].host);
 });
 
-// routes
-require('./routes')(app);
 

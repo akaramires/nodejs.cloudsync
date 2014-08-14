@@ -79,7 +79,7 @@ exports.routes = function (app) {
                             console.log('error', err);
 
                             res.render('cloud/refresh', {
-                                url: '/cloud-sync/google/refresh'
+                                url: '/cloud-sync/google/auth'
                             }, function (err, html) {
                                 res.writeHead(200, {"Content-Type": "application/json"});
                                 res.end(JSON.stringify({

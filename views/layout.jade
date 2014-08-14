@@ -17,12 +17,12 @@ html
         .container
             - if (typeof show_title === 'undefined')
                 .page-header
-                    h1= title
+                    h3= title
                         block sub-title
 
             .page-content
                 - if(typeof messages !== "undefined")
-                    - if (messages.error)
+                    - if (messages.error || messages.danger)
                         .msg-flash(data-type='danger')
                             span= messages.error
                     - if (messages.success)

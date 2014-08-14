@@ -15,7 +15,7 @@ module.exports = function (app, auth) {
         }
 
         res.render('index', {
-            title     : 'Home',
+            title     : require('../config').site.title,
             user      : req.user,
             show_title: false
         });

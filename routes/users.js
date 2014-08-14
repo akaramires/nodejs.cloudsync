@@ -45,7 +45,7 @@ module.exports = function (app, auth) {
             },
             other  : function (form) {
                 res.render('user/register', {
-                    title: 'Register',
+                    title: 'Create Free Account',
                     form : form.toHTML(form_tpls.TWB)
                 })
             }

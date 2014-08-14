@@ -21,7 +21,6 @@
 
         GooglePanel.prototype.init = function () {
             this.exec({id: 'root'}, false);
-//            this.exec({id: '0B482Ywq2Rr2hOEVjQlRuSEs0Nkk'}, false);
         };
 
         GooglePanel.prototype.assignEvents = function () {
@@ -121,7 +120,6 @@
         };
 
         DropboxPanel.prototype.init = function () {
-//            this.exec({path: '/WGEN/Legal'}, false);
             this.exec({id: 'root'}, false);
         };
 
