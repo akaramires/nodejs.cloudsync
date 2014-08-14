@@ -16,7 +16,8 @@ var Account = new Schema({
     last_name : String,
     photo     : String,
     google    : Object,
-    dropbox   : Object
+    dropbox   : Object,
+    status    : String
 });
 
 Account.plugin(passportLocalMongoose);

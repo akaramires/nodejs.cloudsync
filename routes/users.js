@@ -1,7 +1,7 @@
 var passport = require('passport'),
     crypto = require('crypto'),
     fs = require('fs'),
-    util = require('util'),
+    mail = require('../mail').MGMail,
     http = require('http'),
     url = require('url');
 
@@ -24,7 +24,8 @@ module.exports = function (app, auth) {
                     username  : form.data.username,
                     email     : form.data.email,
                     first_name: form.data.first_name,
-                    last_name : form.data.last_name
+                    last_name : form.data.last_name,
+                    status    : 'free'
                 }), form.data.password, function (err, account) {
                     if (err && err.code !== 11000) {
                         switch (err.code) {
@@ -39,6 +40,8 @@ module.exports = function (app, auth) {
                     }
 
                     passport.authenticate('local')(req, res, function () {
+                        mail.sendRaw("info@cloudsync.com", form.data.email, "Your registration with CloudSync!", "Thank you for registering with CloudSync!<br><br>See you on cloudsync.com<br><br><br>Your CloudSync! Team");
+
                         return res.redirect('/cloud-sync');
                     });
                 });

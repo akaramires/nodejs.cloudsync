@@ -4,7 +4,8 @@ var url = require('url'),
     fields = forms.fields,
     validators = forms.validators,
     widgets = forms.widgets,
-    form_tpls = require('../forms')(forms, fields, validators, widgets);
+    form_tpls = require('../forms')(forms, fields, validators, widgets),
+    mail = require('../mail').MGMail;
 
 var SubscribeModel = require('../models/subscriber');
 
@@ -43,26 +44,17 @@ module.exports = function (app, auth) {
     app.all('/contact-us', function (req, res) {
         form_tpls.CONTACT_US.handle(req, {
             success: function (form) {
-
-                var Mailgun = require('mailgun').Mailgun;
-                var mg = new Mailgun(config.mailgun.API_KEY);
-                mg.sendRaw(form.data.email,
-                    config.options.contactEmails,
-                        'From: ' + form.data.email +
-                        '\nTo: ' + config.options.contactEmails.join(', ') +
-                        '\nContent-Type: text/html; charset=utf-8' +
-                        '\nSubject: ' + form.data.subject +
-                        '\n\n' + form.data.message,
-                    {'X-Campaign-Id': 'something'},
-                    function (err) {
-                        if (err) {
-                            req.flash('error', 'Oh snap! Change a few things up and try submitting again.');
-                            console.log(err);
-                        } else {
-                            req.flash('success', 'Your message was sent successfully!');
-                        }
-                        res.redirect('/contact-us');
-                    });
+                mail.sendRaw("info@cloudsync.com", config.options.contactEmails.join(', '), form.data.subject, form.data.message, function (err) {
+                    if (err) {
+                        var msg = 'Oh snap! Change a few things up and try submitting again.';
+                        req.flash('error', msg);
+                        console.log(err);
+                    } else {
+                        var msg = 'Your message was sent successfully!';
+                        req.flash('success', msg);
+                    }
+                    res.redirect('/contact-us');
+                });
             },
             other  : function (form) {
                 res.render('pages/contact-us', {
