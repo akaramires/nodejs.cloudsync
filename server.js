@@ -85,7 +85,7 @@ mongoose.connection.on('connected', function () {
     console.log('Mongoose connection open to ' + config.site[app.get('env')].mongoose.url);
     console.log(app.get('port'));
 
-    app.listen(app.get('port'), function () {
+    server.listen(app.get('port'), function () {
         console.log("Application started at " + config.site[app.get('env')].baseUrl + ' in "' + app.get('env') + '" mode');
     });
 
