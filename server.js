@@ -12,13 +12,13 @@ var express = require('express'),
 
 var app = express();
 
-if (require('path').dirname(require.main.filename) != '/var/www/s/node-express') {
-    process.env.NODE_ENV = 'openshift';
-}
-
-console.log(process.env.NODE_ENV);
-
 var env = process.argv[2] || process.env.NODE_ENV || 'development';
+
+if (process.env.OPENSHIFT_NODEJS_IP != null) {
+    env = 'openshift';
+}
+console.log(env);
+
 global.env = env;
 
 app.configure(function () {
