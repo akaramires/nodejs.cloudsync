@@ -78,7 +78,8 @@ passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
 
 // mongoose
-mongoose.connect(config.site[app.get('env')].mongoose.url, {auth: {authdb: "admin"}});
+mongoose.connect(config.site[app.get('env')].mongoose.url);
+//mongoose.connect(config.site[app.get('env')].mongoose.url, {auth: {authdb: "admin"}});
 
 mongoose.connection.on('connected', function () {
     console.log('Mongoose connection open to ' + config.site[app.get('env')].mongoose.url);
