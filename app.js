@@ -16,7 +16,7 @@ var env = process.argv[2] || process.env.NODE_ENV || 'development';
 global.env = env;
 
 app.configure(function () {
-    app.disable('x-powered-by');
+//    app.disable('x-powered-by');
     app.set('env', env);
     app.set('port', config.site[app.get('env')].port);
     app.set('views', __dirname + '/views');
@@ -68,7 +68,7 @@ passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
 
 // mongoose
-mongoose.connect(config.mongoose.url);
+mongoose.connect(config.site[app.get('env')].mongoose.url);
 
 mongoose.connection.on('connected', function () {
     console.log('Mongoose connection open to ' + config.mongoose.url);

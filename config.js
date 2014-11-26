@@ -1,9 +1,4 @@
 module.exports = {
-    mongoose: {
-        server: 'localhost',
-        port  : 27017,
-        url   : 'mongodb://localhost/cloudsync'
-    },
     site    : {
         title      : 'CloudSync!',
         development: {
@@ -12,7 +7,12 @@ module.exports = {
             port         : 3030,
             cookieSecret : '8mjwB7nPhfHILeeQFkjzu1Nl91KdD7kxsxLDfStc',
             sessionSecret: 'bxWEV7W126v9DlFJQrLSc60gqx8i3apNGDkYLKSf',
-            ga_file      : 'ga.local.js'
+            ga_file      : 'ga.local.js',
+            mongoose     : {
+                server: 'localhost',
+                port  : 27017,
+                url   : 'mongodb://localhost/cloudsync'
+            }
         },
         production : {
             host         : 'localhost',
@@ -20,7 +20,25 @@ module.exports = {
             port         : 3000,
             cookieSecret : 'kPKFeqhemadOfq46jPg0O9FkUDH03ITLvcufHxgC',
             sessionSecret: 'VnLxoGqMzGczxW6WdeURX9DaiKAYw33sPivgBpGC',
-            ga_file      : 'ga.eatech.js'
+            ga_file      : 'ga.eatech.js',
+            mongoose     : {
+                server: 'localhost',
+                port  : 27017,
+                url   : 'mongodb://localhost/cloudsync'
+            }
+        },
+        openshift  : {
+            host         : 'cloudsync-eatech.rhcloud.com',
+            baseUrl      : 'http://cloudsync-eatech.rhcloud.com/',
+            port         : 80,
+            cookieSecret : 'kPKFeqhemadOfq46jPg0O9FkUDH03ITLvcufHxgC',
+            sessionSecret: 'VnLxoGqMzGczxW6WdeURX9DaiKAYw33sPivgBpGC',
+            ga_file      : 'ga.openshift.js',
+            mongoose     : {
+                server: 'localhost',
+                port  : process.env.OPENSHIFT_MONGODB_DB_PORT,
+                url   : 'mongodb://' + process.env.OPENSHIFT_MONGODB_DB_HOST + ':' + process.env.OPENSHIFT_MONGODB_DB_PORT + '/cloudsync'
+            }
         }
     },
     cloud   : {
@@ -58,6 +76,24 @@ module.exports = {
                 AUTH_URL     : 'https://www.dropbox.com/1/oauth/authorize',
                 ACCESS_TOKEN : 'ZAJq0ux5k_gAAAAAAAAERI1UkDeWBRSDmNg3gRQkwV96IBHFeIAZgkMXRgAqTFL9',
                 REDIRECT_URL : 'http://cloudsync.eatech.org/cloud-sync/dropbox/callback',
+                ROOT         : 'dropbox'
+            }
+        },
+        openshift  : {
+            google : {
+                CLIENT_ID    : '205864361842-kac7ptg5spp8199sm7v7geu5qioh9p9h.apps.googleusercontent.com',
+                CLIENT_EMAIL : '205864361842-kac7ptg5spp8199sm7v7geu5qioh9p9h@developer.gserviceaccount.com',
+                CLIENT_SECRET: 'GaKZ6G-rQKd_3yr_n1_1ClRN',
+                REDIRECT_URL : 'https://cloudsync-eatech.rhcloud.com/cloud-sync/google/callback',
+                SCOPE        : 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.apps.readonly',
+                ACCESS_TYPE  : 'offline'
+            },
+            dropbox: {
+                CLIENT_ID    : 'b9p3b0wkf3hnm56',
+                CLIENT_SECRET: 'zgizf669b74613v',
+                AUTH_URL     : 'https://www.dropbox.com/1/oauth/authorize',
+                ACCESS_TOKEN : 'ZAJq0ux5k_gAAAAAAAAERI1UkDeWBRSDmNg3gRQkwV96IBHFeIAZgkMXRgAqTFL9',
+                REDIRECT_URL : 'https://cloudsync-eatech.rhcloud.com/cloud-sync/dropbox/callback',
                 ROOT         : 'dropbox'
             }
         }
