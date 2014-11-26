@@ -80,6 +80,13 @@ module.exports = function (app, auth) {
         });
     });
 
+    app.get('/settings/upgrade', auth, function (req, res) {
+        res.render('user/upgrade', {
+            title  : 'Upgrade account',
+            user   : req.user
+        });
+    });
+
     app.get('/404', function (req, mongres, next) {
         next();
     });

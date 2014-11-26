@@ -62,6 +62,16 @@ module.exports = {
             }
         }
     },
+    stripe  : {
+        test: {
+            secret : 'sk_test_OcgQfW6kmGJFaXgd1RkAVdUn',
+            publish: 'pk_test_icZYFKZKPOmxsbtPHpbvvC68'
+        },
+        live: {
+            secret : 'sk_live_myysHtVhwCWgQefW7P9veeQq',
+            publish: 'pk_live_0E4ioodeLqCiuUB2fc8UnCek'
+        }
+    },
     mailgun : {
         API_KEY: 'key-7ybbqsjaigqazwh50qipnix4vcswrz44'
     },

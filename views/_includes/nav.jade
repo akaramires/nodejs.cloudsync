@@ -29,8 +29,11 @@
                         a(href='/login')  Login
                 if (user)
                     li
+                        a.btn.btn-danger(href="/settings/upgrade")
+                            i(class='fa fa-cloud')  Upgrade account
+                    li
                         a(href="/cloud-sync")
-                            i(class='fa fa-cloud')  Start sync
+                            i(class='fa fa-cloud')  Sync
                     li.dropdown
                         a.dropdown-toggle(href="#", data-toggle="dropdown")
                             i(class='fa fa-user') <b class="caret"></b>

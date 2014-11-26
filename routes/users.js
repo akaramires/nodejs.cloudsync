@@ -21,11 +21,11 @@ module.exports = function (app, auth) {
         form_tpls.REGISTRATION.handle(req, {
             success: function (form) {
                 Account.register(new Account({
-                    username  : form.data.username,
-                    email     : form.data.email,
-                    first_name: form.data.first_name,
-                    last_name : form.data.last_name,
-                    status    : 'free'
+                    username    : form.data.username,
+                    email       : form.data.email,
+                    first_name  : form.data.first_name,
+                    last_name   : form.data.last_name,
+                    account_type: 'free'
                 }), form.data.password, function (err, account) {
                     if (err && err.code !== 11000) {
                         switch (err.code) {

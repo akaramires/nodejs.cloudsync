@@ -29,6 +29,7 @@ block content
                                 - if (panels.first.show)
                                     i.fa.fa-spinner.fa-spin
                                 - else
+                                    p Your access token is empty or has expired
                                     a.btn.btn-danger(href='#{panels.first.authUrl}') Authenticate
                     .col-xs-6.col-md-6.col-single.to(data-direction='to')
                         .list-group.empty
@@ -36,7 +37,9 @@ block content
                                 - if (panels.second.show)
                                     i.fa.fa-spinner.fa-spin
                                 - else
+                                    p Your access token is empty or has expired
                                     a.btn.btn-danger(href='#{panels.second.authUrl}') Authenticate
-                .row
-                    .col-xs-4.col-md-4.col-xs-offset-4.text-center
-                        a.btn.btn-success.btn-block#startSync Start Sync
+                - if (panels.second.show && panels.second.show)
+                    .row
+                        .col-xs-4.col-md-4.col-xs-offset-4.text-center
+                            a.btn.btn-success.btn-block#startSync Start Sync
