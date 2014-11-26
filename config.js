@@ -35,9 +35,9 @@ module.exports = {
             sessionSecret: 'VnLxoGqMzGczxW6WdeURX9DaiKAYw33sPivgBpGC',
             ga_file      : 'ga.openshift.js',
             mongoose     : {
-                server: 'localhost',
-                port  : 27017,
-                url   : 'mongodb://localhost/cloudsync'
+                server: process.env.OPENSHIFT_MONGODB_DB_HOST,
+                port  : process.env.OPENSHIFT_MONGODB_DB_PORT,
+                url   : process.env.OPENSHIFT_MONGODB_DB_URL + 'cloudsync'
             }
         }
     },
