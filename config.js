@@ -29,8 +29,8 @@ module.exports = {
         },
         openshift  : {
             host         : 'cloudsync-eatech.rhcloud.com',
-            baseUrl      : 'http://cloudsync-eatech.rhcloud.com/',
-            port         : 80,
+            baseUrl      : 'http://cloudsync-eatech.rhcloud.com:' + process.env.OPENSHIFT_NODEJS_PORT + '/',
+            port         : process.env.OPENSHIFT_NODEJS_PORT,
             cookieSecret : 'kPKFeqhemadOfq46jPg0O9FkUDH03ITLvcufHxgC',
             sessionSecret: 'VnLxoGqMzGczxW6WdeURX9DaiKAYw33sPivgBpGC',
             ga_file      : 'ga.openshift.js',

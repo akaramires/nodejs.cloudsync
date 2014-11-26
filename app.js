@@ -12,6 +12,12 @@ var express = require('express'),
 
 var app = express();
 
+if (require('path').dirname(require.main.filename) != '/var/www/s/node-express') {
+    process.env.NODE_ENV = 'openshift';
+}
+
+console.log(process.env.NODE_ENV);
+
 var env = process.argv[2] || process.env.NODE_ENV || 'development';
 global.env = env;
 
@@ -75,7 +81,7 @@ passport.deserializeUser(Account.deserializeUser());
 mongoose.connect(config.site[app.get('env')].mongoose.url);
 
 mongoose.connection.on('connected', function () {
-    console.log('Mongoose connection open to ' + config.mongoose.url);
+    console.log('Mongoose connection open to ' + config.site[app.get('env')].mongoose.url);
 
     server.listen(app.get('port'), function () {
         console.log("Application started at " + config.site[app.get('env')].baseUrl + ' in "' + app.get('env') + '" mode');
@@ -95,7 +101,7 @@ mongoose.connection.on('error', function (err) {
 
         res.writeHead(200, {'Content-Type': 'text/plain'});
         res.end('DB connection error');
-    }).listen(app.get('port'), config.site[app.get('env')].host);
+    }).listen(config.site[app.get('env')].port, config.site[app.get('env')].host);
 });
 
 
