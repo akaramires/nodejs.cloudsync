@@ -37,7 +37,7 @@ module.exports = {
             mongoose     : {
                 server: process.env.OPENSHIFT_MONGODB_DB_HOST,
                 port  : process.env.OPENSHIFT_MONGODB_DB_PORT,
-                url   : 'mongodb://' + process.env.OPENSHIFT_MONGODB_DB_HOST + '/cloudsync'
+                url   : process.env.OPENSHIFT_MONGODB_DB_URL + 'cloudsync?auto_reconnect=true'
             }
         }
     },
