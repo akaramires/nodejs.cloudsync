@@ -1,0 +1,33 @@
+extends ../layout
+
+block scripts
+    script(src='/js/libs//jquery-ui.min.js')
+
+    script(type='text/javascript').
+        var userObj = {
+            type: !{JSON.stringify(user.account_type)}
+        }
+
+block content
+    .upgrade-page
+        .container
+            .row
+                .col-xs-4
+                    .popover.top.static.free
+                        .arrow
+                        h3.popover-title Free plan
+                .col-xs-4
+                    .popover.top.static.silver
+                        .arrow
+                        h3.popover-title Silver plan
+                .col-xs-4
+                    .popover.top.static.gold
+                        .arrow
+                        h3.popover-title Gold plan
+            .row
+                .col-xs-12
+                    #planSlider
+            .row
+                .col-xs-12.text-center
+                    button.btn.btn-success(type='button') Pay with Card
+

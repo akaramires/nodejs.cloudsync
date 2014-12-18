@@ -1,0 +1,7 @@
+logs
+node_modules
+npm-debug.log
+.idea
+nohup.out
+.openshift
+config.js

@@ -1,0 +1,158 @@
+extends layout
+
+block content
+    .settings-page
+        //.settings-row
+            .settings-row-title Plans
+            .settings-row-content
+                .row
+                    .col-md-4
+                        .panel.panel-plan.free
+                            .panel-heading
+                                h4.text-center FREE PLAN
+                            .panel-body.text-center
+                                p.lead
+                                    strong $0 / month
+                            ul.list-group.list-group-flush.text-center
+                                li.list-group-item.clearfix
+                                    i.icon-ok.text-danger
+                                    span.pull-left Total size of files
+                                    span.pull-right 2GB
+                                li.list-group-item.clearfix
+                                    i.icon-ok.text-danger
+                                    span.pull-left Total number of files
+                                    span.pull-right 20
+                                li.list-group-item.clearfix
+                                    i.icon-ok.text-danger
+                                    span.pull-left Max file size
+                                    span.pull-right 50MB
+                                li.list-group-item.clearfix
+                                    i.icon-ok.text-danger
+                                    span.pull-left 100% Private
+                            .panel-footer
+                                a.btn.btn-lg.btn-block.btn-link.disabled CURRENT
+                    .col-md-4
+                        .panel.panel-plan.silver
+                            .panel-heading
+                                h4.text-center
+                                    | SILVER PLAN
+                            .panel-body.text-center
+                                p.lead
+                                    strong $30 / month
+                            ul.list-group.list-group-flush.text-center
+                                li.list-group-item.clearfix
+                                    i.icon-ok.text-danger
+                                    span.pull-left Total size of files
+                                    span.pull-right 10GB
+                                li.list-group-item.clearfix
+                                    i.icon-ok.text-danger
+                                    span.pull-left Total number of files
+                                    span.pull-right Unlimited
+                                li.list-group-item.clearfix
+                                    i.icon-ok.text-danger
+                                    span.pull-left Max file sizespan.pull-right
+                                    span.pull-right 300MB
+                                li.list-group-item.clearfix
+                                    i.icon-ok.text-danger
+                                    span.pull-left 100% Private
+                            .panel-footer
+                                a.btn.btn-lg.btn-block(href='#') BUY NOW!
+                    .col-md-4
+                        .panel.panel-plan.gold
+                            .panel-heading
+                                h4.text-center
+                                    | GOLD PLAN
+                            .panel-body.text-center
+                                p.lead
+                                    strong $100 / month
+                            ul.list-group.list-group-flush.text-center
+                                li.list-group-item.clearfix
+                                    i.icon-ok.text-danger
+                                    span.pull-left Total size of files
+                                    span.pull-right Unlimited
+                                li.list-group-item.clearfix
+                                    i.icon-ok.text-danger
+                                    span.pull-left Total number of files
+                                    span.pull-right Unlimited
+                                li.list-group-item.clearfix
+                                    i.icon-ok.text-danger
+                                    span.pull-left Max file size
+                                    span.pull-right Unlimited
+                                li.list-group-item.clearfix
+                                    i.icon-ok.text-danger
+                                    span.pull-left 100% Private
+                            .panel-footer
+                                a.btn.btn-lg.btn-block(href='#') BUY NOW!
+
+        - if(typeof links !== "undefined")
+            .settings-row
+                .settings-row-title Clouds
+                .settings-row-content
+                    .row
+                        .col-xs-4
+                            .tile
+                                i.ico-moon-google-drive.fa-5x
+                                h3.tile-title Google Drive
+                                - if (!links.google)
+                                    a.btn.btn-primary.btn-large.btn-block(data-toggle="modal", data-target="#modalGoogle") Connect
+                                    #modalGoogle.modal.fade(tabindex="-1", role="dialog", aria-labelledby="modalGoogleLabel", aria-hidden="true")
+                                        .modal-dialog
+                                            .modal-content
+                                                .modal-header
+                                                    button.close(type="button", data-dismiss="modal")
+                                                        span(aria-hidden="true") &times;
+                                                        span.sr-only Close
+                                                    h4.modal-title#myModalLabel YOUR DATA IS SECURE!
+                                                .modal-body.text-left
+                                                    .row
+                                                        .col-sm-3.text-center
+                                                            i.fa.fa-lock.fa-5x
+                                                        .col-sm-9
+                                                            ul.list-unstyled
+                                                                li None of your user credentials are stored
+                                                                li CloudSync does not have access to your account
+                                                                li CloudSync uses secure API-Keys (OAuth/Access-Token)
+                                                .modal-footer
+                                                    button.btn.btn-default(type="button", data-dismiss="modal") Cancel
+                                                    a.btn.btn-primary(href='#{authUrl.google}') Connect
+                                - else
+                                    a.btn.btn-link Connected!
+                                    a.btn.btn-danger
+                                        small.text-right Disconnect
+
+                        .col-xs-4
+                            .tile
+                                i.fa.fa-dropbox.fa-5x
+                                h3.tile-title Dropbox
+                                - if (!links.dropbox)
+                                    a.btn.btn-primary.btn-large.btn-block(data-toggle="modal", data-target="#modalDropbox") Connect
+                                    #modalDropbox.modal.fade(tabindex="-1", role="dialog", aria-labelledby="modalDropboxLabel", aria-hidden="true")
+                                        .modal-dialog
+                                            .modal-content
+                                                .modal-header
+                                                    button.close(type="button", data-dismiss="modal")
+                                                        span(aria-hidden="true") &times;
+                                                        span.sr-only Close
+                                                    h4.modal-title#myModalLabel YOUR DATA IS SECURE!
+                                                .modal-body.text-left
+                                                    .row
+                                                        .col-sm-3.text-center
+                                                            i.fa.fa-lock.fa-5x
+                                                        .col-sm-9
+                                                            ul.list-unstyled
+                                                                li None of your user credentials are stored
+                                                                li CloudSync does not have access to your account
+                                                                li CloudSync uses secure API-Keys (OAuth/Access-Token)
+                                                .modal-footer
+                                                    button.btn.btn-default(type="button", data-dismiss="modal") Cancel
+                                                    a.btn.btn-primary(href='#{authUrl.dropbox}') Connect
+                                - else
+                                    a.btn.btn-link Connected!
+                                    a.btn.btn-danger
+                                        small.text-right Disconnect
+
+                        .col-xs-4
+                            .tile
+                                i.fa.fa-question.fa-5x
+                                h3.tile-title Questions?
+                                a.btn.btn-default.btn-lg.btn-block Contact Us

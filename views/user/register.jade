@@ -1,0 +1,12 @@
+extends ../layout
+
+block content
+
+    .row
+        .form-signin
+            form.form-horizontal(role='form', action="/register", method="post")
+                !=form
+                .form-group
+                    .col-sm-offset-4.col-sm-8
+                        a.btn.btn-link.btn-cancel.pull-left(href='/') Cancel
+                        button.btn.btn-success.btn-submit.pull-right(type='submit') Register

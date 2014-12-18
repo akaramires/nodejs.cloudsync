@@ -1,0 +1,16 @@
+extends ../layout
+
+block content
+    .row.edit-user-form
+        form.form-horizontal(autocomplete="off", role='form', action="/profile/edit", method="post", enctype="multipart/form-data")
+            - if(typeof form !== "undefined" && typeof user !== "undefined")
+                //=JSON.stringify(form.first_name.name)
+                .col-sm-6
+                    img.user-photo.img-circle(src=user.photo)
+                .col-sm-6
+                    !=form
+            .col-sm-12
+                .form-group
+                    .col-sm-12
+                        button.btn.btn-success.btn-submit.pull-right(type='submit') Save
+                        a.btn.btn-link.btn-cancel.pull-right(href='/profile') Cancel

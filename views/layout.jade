@@ -1,0 +1,51 @@
+doctype html
+html
+    head
+        title= title
+        //link(rel='stylesheet', href='/css/libs/bootstrap.darkly.css')
+        //link(rel='stylesheet', href='/css/libs/bootswatch.min.css')
+        link(rel='stylesheet', href='/css/libs/bootstrap.flat.css')
+        link(rel='stylesheet', href='/css/libs/font-awesome.min.css')
+        link(rel='stylesheet', href='/css/libs/icomoon.css')
+        block styles
+        link(rel='stylesheet', href='/css/style.css')
+
+        script(src="/js/#{settings.ga}")
+    body
+        include _includes/header
+
+        .container
+            - if (typeof show_title === 'undefined')
+                .page-header
+                    h3= title
+                        block sub-title
+
+            .page-content
+                - if(typeof messages !== "undefined")
+                    - if (messages.error || messages.danger)
+                        .msg-flash(data-type='danger')
+                            span= messages.error
+                    - if (messages.success)
+                        .msg-flash(data-type='success')
+                            span= messages.success
+                    - if (messages.info)
+                        .msg-flash(data-type='info')
+                            span= messages.info
+                    - if (messages.warning)
+                        .msg-flash(data-type='warning')
+                            span= messages.warning
+
+                block content
+
+        include _includes/footer
+
+        script(src='/socket.io/socket.io.js')
+        script(src='/js/__.js')
+        script(src='/js/libs/jquery.min.js')
+        script(src='/js/libs/bootstrap.min.js')
+        script(src='/js/libs/jquery.noty.min.js')
+        script(src='/js/base.js')
+        block scripts
+        script(src='/js/main.js')
+        block post_scripts
+

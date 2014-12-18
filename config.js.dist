@@ -1,0 +1,86 @@
+module.exports = {
+    site    : {
+        title      : 'CloudSync!',
+        development: {
+            host         : '127.0.0.1',
+            baseUrl      : 'http://127.0.0.1:3030/',
+            port         : 3030,
+            cookieSecret : '8mjwB7nPhfHILeeQFkjzu1Nl91KdD7kxsxLDfStc',
+            sessionSecret: 'bxWEV7W126v9DlFJQrLSc60gqx8i3apNGDkYLKSf',
+            ga_file      : 'ga.local.js',
+            mongoose     : {
+                server: 'localhost',
+                port  : 27017,
+                url   : 'mongodb://localhost/cloudsync'
+            }
+        },
+        production : {
+            host         : 'localhost',
+            baseUrl      : 'http://localhost:3000/',
+            port         : 3000,
+            cookieSecret : 'kPKFeqhemadOfq46jPg0O9FkUDH03ITLvcufHxgC',
+            sessionSecret: 'VnLxoGqMzGczxW6WdeURX9DaiKAYw33sPivgBpGC',
+            ga_file      : 'ga.eatech.js',
+            mongoose     : {
+                server: 'localhost',
+                port  : 27017,
+                url   : 'mongodb://localhost/cloudsync'
+            }
+        }
+    },
+    cloud   : {
+        list       : ['google', 'dropbox'],
+        development: {
+            google : {
+                CLIENT_ID    : '',
+                CLIENT_EMAIL : '',
+                CLIENT_SECRET: '',
+                REDIRECT_URL : 'http://127.0.0.1:3030/cloud-sync/google/callback',
+                SCOPE        : 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.apps.readonly',
+                ACCESS_TYPE  : 'offline'
+            },
+            dropbox: {
+                CLIENT_ID    : '',
+                CLIENT_SECRET: '',
+                AUTH_URL     : 'https://www.dropbox.com/1/oauth/authorize',
+                ACCESS_TOKEN : '',
+                REDIRECT_URL : 'http://127.0.0.1:3030/cloud-sync/dropbox/callback',
+                ROOT         : 'dropbox'
+            }
+        },
+        production : {
+            google : {
+                CLIENT_ID    : '',
+                CLIENT_EMAIL : '',
+                CLIENT_SECRET: '',
+                REDIRECT_URL : 'http://cloudsync.eatech.org/cloud-sync/google/callback',
+                SCOPE        : 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.apps.readonly',
+                ACCESS_TYPE  : 'offline'
+            },
+            dropbox: {
+                CLIENT_ID    : '',
+                CLIENT_SECRET: '',
+                AUTH_URL     : 'https://www.dropbox.com/1/oauth/authorize',
+                ACCESS_TOKEN : '',
+                REDIRECT_URL : 'http://cloudsync.eatech.org/cloud-sync/dropbox/callback',
+                ROOT         : 'dropbox'
+            }
+        }
+    },
+    stripe  : {
+        test: {
+            secret : '',
+            publish: ''
+        },
+        live: {
+            secret : '',
+            publish: ''
+        }
+    },
+    mailgun : {
+        API_KEY: ''
+    },
+    options : {
+        contactEmails: ['e.abdurayimov@gmail.com']
+    }
+};

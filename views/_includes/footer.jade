@@ -1,0 +1,21 @@
+#footer
+    nav.navbar.navbar-default.navbar-static-botom(role="navigation")
+        //.container
+            ul.nav.navbar-nav.navbar-left
+                li
+                    a(href=(title == 'Home') ? '#about' : '/#about')  About
+                li
+                    a(href=(title == 'Home') ? '#newsletter' : '/#newsletter')  Newsletter
+                li
+                    a(href=(title == 'Home') ? '#contact-us' : '/#contact-us')  Questions?
+            ul.nav.navbar-nav.navbar-right
+                li.social-links
+                    button.btn.btn-inverse
+                        i.fa.fa-twitter
+                    button.btn.btn-inverse
+                        i.fa.fa-facebook
+                    button.btn.btn-inverse
+                        i.fa.fa-google
+        .container
+            p.text-muted.text-center
+                small © Copyright CloudSync! - 2014 - All Rights Reserved.
