@@ -4,3 +4,4 @@ npm-debug.log
 .idea
 nohup.out
 .openshift
+config.local.js
