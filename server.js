@@ -7,6 +7,7 @@ var express       = require('express'),
     flash         = require('express-flash'),
     session       = require('express-session'),
     RedisStore    = require('connect-redis')(session),
+    redis         = require('heroku-redis-client'),
     url           = require('url');
 
 var app = express();
@@ -37,7 +38,7 @@ app.configure(function () {
     app.use(express.cookieParser(config.site[app.get('env')].cookieSecret));
     app.use(express.session({
         secret: config.site[app.get('env')].sessionSecret,
-        store : new RedisStore
+        store : new RedisStore({client: redis.createClient()})
     }));
     app.use(flash());
     app.use(passport.initialize());
