@@ -34,7 +34,7 @@ module.exports = {
                 CLIENT_ID    : 'b9p3b0wkf3hnm56',
                 CLIENT_SECRET: 'zgizf669b74613v',
                 AUTH_URL     : 'https://www.dropbox.com/1/oauth/authorize',
-                ACCESS_TOKEN : 'ZAJq0ux5k_gAAAAAAAAERI1UkDeWBRSDmNg3gRQkwV96IBHFeIAZgkMXRgAqTFL9',
+                ACCESS_TOKEN : 'ZAJq0ux5k_gAAAAAAAAIYo9uywojXQDTus1GVuifHe5EqswX4Ahr6IJCgyUmjHsn',
                 REDIRECT_URL : 'https://cloudsync.herokuapp.com/cloud-sync/dropbox/callback',
                 ROOT         : 'dropbox'
             }
